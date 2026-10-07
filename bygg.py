@@ -97,7 +97,7 @@ BANNER = (
 # --- Innhold ----------------------------------------------------------------
 NAV = [
     ("/#tjenester", "Tjenester"),
-    ("/#prosjekter", "Prosjekter"),
+    ("/prosjekter/", "Prosjekter"),
     ("/#om-oss", "Om oss"),
     ("/#prosess", "Slik jobber vi"),
 ]
@@ -552,7 +552,12 @@ def facebookkort():
 
 
 def prosjekter():
-    fliser = "\n".join(prosjektkort(p) for p in PROSJEKTER) + "\n" + facebookkort()
+    # Forsiden viser de tre nyeste. Er det færre enn tre, fylles plassen med
+    # Facebook-kortet. Alle står på /prosjekter/.
+    utvalg = [prosjektkort(p) for p in PROSJEKTER[:3]]
+    if len(utvalg) < 3:
+        utvalg.append(facebookkort())
+    fliser = "\n".join(utvalg)
     return f'''<section class="seksjon prosjekter" id="prosjekter" aria-labelledby="prosjekter-tittel" data-maal="2">
 <div class="ramme">
 <div class="seksjonstopp">
@@ -563,6 +568,7 @@ def prosjekter():
 <div class="prosjektgrid">
 {fliser}
 </div>
+<div class="prosjekter__mer sig"><a class="knapp" href="/prosjekter/">Se flere prosjekter {PIL_IKON}</a></div>
 </div>
 </section>'''
 
@@ -703,7 +709,7 @@ def bygg_prosjektsider():
         url = f"/prosjekter/{p['slug']}/"
         innhold = f'''<article class="prosjektside">
 <div class="ramme">
-<nav class="brodsmuler" aria-label="Brødsmuler"><a href="/">Forside</a><span aria-hidden="true">/</span><a href="/#prosjekter">Prosjekter</a><span aria-hidden="true">/</span><span aria-current="page">{e(p["tittel"])}</span></nav>
+<nav class="brodsmuler" aria-label="Brødsmuler"><a href="/">Forside</a><span aria-hidden="true">/</span><a href="/prosjekter/">Prosjekter</a><span aria-hidden="true">/</span><span aria-current="page">{e(p["tittel"])}</span></nav>
 <p class="stikk">Prosjekt · {e(p["sted"])} · {e(p["tid"])}</p>
 <h1>{e(p["tittel"])}</h1>
 <div class="prosjektside__topp">
@@ -739,9 +745,53 @@ def bygg_prosjektsider():
             f"og hva vi gjorde.",
             url,
             innhold,
-            ld=(brodsmuler_ld([("Forside", "/"), ("Prosjekter", "/#prosjekter"), (p["tittel"], url)]),),
+            ld=(brodsmuler_ld([("Forside", "/"), ("Prosjekter", "/prosjekter/"), (p["tittel"], url)]),),
             kropp_klasse="undersiden",
         )
+
+
+def bygg_prosjektoversikt():
+    rader = []
+    for i, p in enumerate(PROSJEKTER, 1):
+        navn, alt = p["bilder"][0]
+        url = f"/prosjekter/{p['slug']}/"
+        lapper = "".join(f"<li>{e(x)}</li>" for x in p["arbeid"][:5])
+        rader.append(f'''<li class="prosjektrad sig">
+<a class="prosjektrad__bilde" href="{url}" tabindex="-1" aria-hidden="true">{bilde(navn, alt, "(min-width: 860px) 40vw, 100vw")}</a>
+<div class="prosjektrad__tekst">
+<p class="prosjektrad__meta"><span class="prosjektrad__nr">{i:02d}</span>{e(p["sted"])} · {e(p["tid"])} · {len(p["bilder"])} bilder</p>
+<h2><a href="{url}">{e(p["tittel"])}</a></h2>
+<p class="prosjektrad__ingress">{e(p["ingress"])}</p>
+<ul class="merkelapper" aria-label="Arbeid i prosjektet">{lapper}</ul>
+<a class="prosjektkort__lenke" href="{url}" aria-hidden="true" tabindex="-1">Se prosjektet {PIL_IKON}</a>
+</div>
+</li>''')
+    antall = len(PROSJEKTER)
+    innhold = f'''<article class="prosjektside prosjektoversikt">
+<div class="ramme">
+<nav class="brodsmuler" aria-label="Brødsmuler"><a href="/">Forside</a><span aria-hidden="true">/</span><span aria-current="page">Prosjekter</span></nav>
+<p class="stikk">Prosjekter · {antall} jobber</p>
+<h1>Arbeid vi står for</h1>
+<p class="prosjektside__ingress">Et utvalg av jobbene vi har gjort for private og bedrifter – fra bad og tilbygg til terrasser, drenering og massetransport. Klikk deg inn på et prosjekt for flere bilder og hva vi gjorde.</p>
+<ol class="prosjektliste">
+{"".join(rader)}
+</ol>
+<div class="prosjektside__cta">
+<h2>Har du en lignende jobb?</h2>
+<div class="knapperad"><a class="knapp" href="/#kontakt">Be om befaring {PIL_IKON}</a><a class="knapp knapp--tom" href="{FACEBOOK}" rel="noopener">Flere bilder på Facebook</a></div>
+</div>
+</div>
+</article>'''
+    side(
+        "prosjekter/index.html",
+        f"Prosjekter – bad, tilbygg, terrasse og drenering | {FIRMA}",
+        f"Se prosjekter fra {FIRMA}: bad og vaskerom, tilbygg, terrasser, drenering og "
+        f"massetransport i {KOMMUNE}, Hamar og {FYLKE}.",
+        "/prosjekter/",
+        innhold,
+        ld=(brodsmuler_ld([("Forside", "/"), ("Prosjekter", "/prosjekter/")]),),
+        kropp_klasse="undersiden",
+    )
 
 
 # --- Personvern -------------------------------------------------------------
@@ -802,7 +852,7 @@ def bygg_404():
 
 
 # --- Faste filer ------------------------------------------------------------
-SIDER_FOR_SITEMAP = ["/", "/personvern/"] + [f"/prosjekter/{p['slug']}/" for p in PROSJEKTER]
+SIDER_FOR_SITEMAP = ["/", "/prosjekter/", "/personvern/"] + [f"/prosjekter/{p['slug']}/" for p in PROSJEKTER]
 
 
 def bygg_sitemap(dato="2026-10-07"):
@@ -854,6 +904,7 @@ def bygg_manifest():
 def main():
     bygg_forside()
     bygg_prosjektsider()
+    bygg_prosjektoversikt()
     bygg_personvern()
     bygg_404()
     bygg_sitemap()
