@@ -132,14 +132,17 @@ TJENESTER = [
 
 FACEBOOK = "https://www.facebook.com/SKbyggserviceas"
 
-# Prosjektene er hentet fra kundens egen Facebook-side 7. okt 2026. «sitat» er
-# det firmaet selv skrev i innlegget, og bildene er fra samme innlegg. Sted
-# oppgis bare der firmaet selv har oppgitt det, og aldri mer presist enn
-# kommune. Aldri adresse, kundenavn, husnummer, bilnummer eller personer.
+# Prosjektene er hentet fra kundens egen Facebook-side 7. okt 2026, nyeste først.
+# «sitat» er det firmaet selv skrev i innlegget. Der det mangler, er tittel,
+# ingress og arbeid skrevet av oss ut fra bildene og må bekreftes av kunden.
+# «tid» er året innlegget ble publisert. Sted oppgis bare der firmaet selv har
+# oppgitt det, og aldri mer presist enn kommune. Aldri adresse, kundenavn,
+# husnummer, bilnummer eller personer. «forside»: vises blant de tre på forsiden.
 # Nye bilder: verktoy/lag_bilder.py <bilde> prosjekt-<navn> --bredder 480,800,<bredde>
 PROSJEKTER = [
     {
         "slug": "bad-vaskerom-og-drenering",
+        "forside": True,
         "tittel": "Nytt bad, vaskerom og drenering",
         "sted": FYLKE,
         "tid": "2026",
@@ -181,7 +184,157 @@ PROSJEKTER = [
             ("prosjekt-terrasse-3", "Trapp og terrasse langs husveggen, med pukk og ny plen langs hekken"),
         ],
     },
+    {
+        "slug": "stottemur-og-nytt-uteomrade",
+        "tittel": "Støttemur og nytt uteområde",
+        "sted": None,
+        "tid": "2025",
+        "sitat": None,
+        "ingress": "Støttemur i betongblokker, masseutskifting og planering med ny matjord – "
+                   "et ryddig uteområde klart for plen.",
+        "arbeid": ["Støttemur i betongblokker", "Masseutskifting", "Planering og ny matjord"],
+        "bilder": [
+            ("prosjekt-stottemur-2", "Gult hus med nyplanert uteområde med matjord, klart for plen"),
+            ("prosjekt-stottemur-1", "Støttemur i grå betongblokker langs et nyplanert uteområde"),
+        ],
+    },
+    {
+        "slug": "nytt-bolighus-i-to-etasjer",
+        "forside": True,
+        "tittel": "Nytt bolighus i to etasjer",
+        "sted": None,
+        "tid": "2025",
+        "sitat": None,
+        "ingress": "Et nytt hus med mørk stående kledning og balkong i tre. Innvendig lyse gulv, "
+                   "malte panelvegger og trapp med svart rekkverk.",
+        "arbeid": ["Utvendig kledning og balkong", "Vinduer og listverk", "Panel og gulv innvendig", "Trapp med rekkverk"],
+        "bilder": [
+            ("prosjekt-nybygg-1", "Nytt bolighus i to etasjer med mørk stående kledning og balkong i tre"),
+            ("prosjekt-nybygg-2", "Trapperom med grønne panelvegger, lyst gulv og svart rekkverk"),
+            ("prosjekt-nybygg-3", "Stue med tre store vinduer, mørke panelvegger og lyst gulv"),
+        ],
+    },
+    {
+        "slug": "garasjebygg-med-fem-porter",
+        "tittel": "Garasjebygg med fem porter",
+        "sted": None,
+        "tid": "2025",
+        "sitat": None,
+        "ingress": "Et stort garasjebygg i tre med fem leddporter og en åpen langside for lagring – "
+                   "fra bindingsverk og takstoler til ferdig kledning.",
+        "arbeid": ["Bindingsverk og takstoler", "Utvendig kledning", "Montering av leddporter", "Åpen langside"],
+        "bilder": [
+            ("prosjekt-garasjebygg-1", "Langt hvitt garasjebygg med fem leddporter"),
+            ("prosjekt-garasjebygg-2", "Garasjebygget innvendig med takstoler og bindingsverk"),
+            ("prosjekt-garasjebygg-3", "Den åpne langsiden av garasjebygget med stolper og takstoler"),
+        ],
+    },
+    {
+        "slug": "terrasse-med-overbygg",
+        "tittel": "Terrasse med overbygg og levegg",
+        "sted": None,
+        "tid": "2024",
+        "sitat": None,
+        "ingress": "Ny terrasse med takoverbygg ved inngangen, levegger i spiler og bred trapp ned til hagen.",
+        "arbeid": ["Terrasse", "Overbygg", "Levegger", "Trapp"],
+        "bilder": [
+            ("prosjekt-terrasse-overbygg-2", "Ny terrasse med hvitt takoverbygg, levegg i spiler og trapp"),
+            ("prosjekt-terrasse-overbygg-1", "Terrasse med levegg i spiler, bord og stoler"),
+        ],
+    },
+    {
+        "slug": "nytt-tak-med-takstein",
+        "tittel": "Nytt tak med takstein",
+        "sted": None,
+        "tid": "2023",
+        "sitat": None,
+        "ingress": "Taket lagt om fra bunnen: nytt undertak, sløyfer og lekter, og ny rød takstein.",
+        "arbeid": ["Undertak", "Sløyfer og lekter", "Ny takstein", "Beslag rundt pipa"],
+        "bilder": [
+            ("prosjekt-tak-1", "Nytt tak med rød takstein og pipe med beslag"),
+            ("prosjekt-tak-3", "Ferdig lagt rød takstein mot blå himmel"),
+            ("prosjekt-tak-2", "Taket under arbeid, med undertak, sløyfer og lekter"),
+        ],
+    },
+    {
+        "slug": "ny-garasje-med-hems",
+        "tittel": "Ny garasje med hems",
+        "sted": None,
+        "tid": "2022",
+        "sitat": None,
+        "ingress": "Romslig garasje med sort stående kledning, to store portåpninger og hems med trapp innvendig.",
+        "arbeid": ["Bindingsverk og tak", "Sort stående kledning", "Hems med trapp", "Innvendig kledning"],
+        "bilder": [
+            ("prosjekt-garasje-2", "Ny garasje med sort stående kledning og to store portåpninger"),
+            ("prosjekt-garasje-1", "Garasjen sett fra siden, med sort kledning og vinduer i gavlen"),
+            ("prosjekt-garasje-3", "Garasjen innvendig med hems og trapp i tre"),
+        ],
+    },
+    {
+        "slug": "hagestue-med-glassvegger",
+        "forside": True,
+        "tittel": "Hagestue med glassvegger",
+        "sted": None,
+        "tid": "2022",
+        "sitat": None,
+        "ingress": "Lys hagestue med store glassfelt, mørk panel og utsikt over landskapet – "
+                   "et ekstra rom til alle årstider.",
+        "arbeid": ["Store glassfelt", "Mørk panel", "Himling med innfelt lys", "Gulv"],
+        "bilder": [
+            ("prosjekt-hagestue-3", "Hagestue med store glassfelt, mørk panel og planter, med utsikt over snødekt landskap"),
+            ("prosjekt-hagestue-1", "Hagestue med mørk panel, lenestol og to stoler rundt et lite bord"),
+            ("prosjekt-hagestue-2", "Hagestua under arbeid, med glassvegger mot terrassen"),
+        ],
+    },
+    {
+        "slug": "nytt-kjokken",
+        "tittel": "Nytt kjøkken",
+        "sted": None,
+        "tid": "2020",
+        "sitat": None,
+        "ingress": "Montering av nytt kjøkken med grå fronter, benkeplate i tre og integrerte hvitevarer.",
+        "arbeid": ["Montering av kjøkkenskap", "Benkeplate i tre", "Integrerte hvitevarer"],
+        "bilder": [
+            ("prosjekt-kjokken-1", "Nytt kjøkken med grå fronter, benkeplate i tre og integrert ovn og mikrobølgeovn"),
+            ("prosjekt-kjokken-2", "Kjøkkenet under montering, med skapene på plass"),
+        ],
+    },
+    {
+        "slug": "etterisolering-av-yttervegg",
+        "tittel": "Etterisolering av yttervegg",
+        "sted": None,
+        "tid": "2020",
+        "sitat": None,
+        "ingress": "Et bedre isolert og tettere hus: ny isolasjon i veggen og vindsperre utenpå – klart for ny kledning.",
+        "arbeid": ["Ny isolasjon", "Vindsperre", "Tilpasning rundt vinduer"],
+        "bilder": [
+            ("prosjekt-etterisolering-2", "Yttervegg med ny isolasjon mellom stenderne"),
+            ("prosjekt-etterisolering-1", "Samme vegg med vindsperre montert utenpå isolasjonen"),
+        ],
+    },
+    {
+        "slug": "massetransport-matjord-og-pukk",
+        "tittel": "Massetransport: matjord og pukk",
+        "sted": None,
+        "tid": "2020",
+        "sitat": None,
+        "ingress": "Vi kjører masser med traktor og tipphenger – matjord til hagen og pukk til grunnarbeid, "
+                   "levert der du trenger det.",
+        "arbeid": ["Matjord", "Pukk", "Levering med tipphenger"],
+        "bilder": [
+            ("prosjekt-massetransport-1", "Tipphenger som har lagt av et lass med matjord"),
+            ("prosjekt-massetransport-2", "Store hauger med pukk foran traktor og tipphenger"),
+        ],
+    },
 ]
+
+
+def prosjektmeta(p, bilder=True):
+    """«Hamar · 2026 · 4 bilder» – sted bare der det finnes."""
+    deler = [p.get("sted"), p.get("tid")]
+    if bilder:
+        deler.append(f"{len(p['bilder'])} bilder")
+    return " · ".join(d for d in deler if d)
 
 STEG = [
     ("Befaring", "Vi kommer ut, ser på jobben og hører hva du vil ha. Da blir tilbudet riktig fra start."),
@@ -533,7 +686,7 @@ def prosjektkort(p):
     return f'''<a class="prosjektkort sig" href="/prosjekter/{p["slug"]}/">
 <div class="prosjektkort__bilde">{bilde(navn, alt, KORT_SIZES)}</div>
 <div class="prosjektkort__tekst">
-<p class="prosjektkort__meta">{e(p["sted"])} · {e(p["tid"])} · {len(p["bilder"])} bilder</p>
+<p class="prosjektkort__meta">{e(prosjektmeta(p))}</p>
 <h3>{e(p["tittel"])}</h3>
 <span class="prosjektkort__lenke">Se prosjektet {PIL_IKON}</span>
 </div>
@@ -554,7 +707,9 @@ def facebookkort():
 def prosjekter():
     # Forsiden viser de tre nyeste. Er det færre enn tre, fylles plassen med
     # Facebook-kortet. Alle står på /prosjekter/.
-    utvalg = [prosjektkort(p) for p in PROSJEKTER[:3]]
+    valgt = [p for p in PROSJEKTER if p.get("forside")][:3]
+    valgt += [p for p in PROSJEKTER if p not in valgt][: 3 - len(valgt)]
+    utvalg = [prosjektkort(p) for p in valgt]
     if len(utvalg) < 3:
         utvalg.append(facebookkort())
     fliser = "\n".join(utvalg)
@@ -707,15 +862,23 @@ def bygg_prosjektsider():
         arbeid = "".join(f"<li>{e(x)}</li>" for x in p["arbeid"])
         andre = "\n".join(prosjektkort(q) for q in PROSJEKTER if q is not p)
         url = f"/prosjekter/{p['slug']}/"
+        sitat = (
+            f'<blockquote class="prosjektside__sitat"><p>«{e(p["sitat"])}»</p>'
+            "<footer>Fra Facebook-siden vår</footer></blockquote>"
+            if p.get("sitat")
+            else ""
+        )
+        sted_tittel = f" – {p['sted']}" if p.get("sted") else ""
+        sted_tekst = f" i {p['sted']}" if p.get("sted") else ""
         innhold = f'''<article class="prosjektside">
 <div class="ramme">
 <nav class="brodsmuler" aria-label="Brødsmuler"><a href="/">Forside</a><span aria-hidden="true">/</span><a href="/prosjekter/">Prosjekter</a><span aria-hidden="true">/</span><span aria-current="page">{e(p["tittel"])}</span></nav>
-<p class="stikk">Prosjekt · {e(p["sted"])} · {e(p["tid"])}</p>
+<p class="stikk">Prosjekt · {e(prosjektmeta(p, bilder=False))}</p>
 <h1>{e(p["tittel"])}</h1>
 <div class="prosjektside__topp">
 <div>
 <p class="prosjektside__ingress">{e(p["ingress"])}</p>
-<blockquote class="prosjektside__sitat"><p>«{e(p["sitat"])}»</p><footer>Fra Facebook-siden vår</footer></blockquote>
+{sitat}
 </div>
 <div class="prosjektside__arbeid">
 <h2>Dette gjorde vi</h2>
@@ -740,8 +903,8 @@ def bygg_prosjektsider():
 </article>'''
         side(
             f"prosjekter/{p['slug']}/index.html",
-            f"{p['tittel']} – {p['sted']} | {FIRMA}",
-            f"{p['tittel']} i {p['sted']}, utført av {FIRMA}. Se {len(p['bilder'])} bilder fra jobben "
+            f"{p['tittel']}{sted_tittel} | {FIRMA}",
+            f"{p['tittel']}{sted_tekst}, utført av {FIRMA}. Se {len(p['bilder'])} bilder fra jobben "
             f"og hva vi gjorde.",
             url,
             innhold,
@@ -759,7 +922,7 @@ def bygg_prosjektoversikt():
         rader.append(f'''<li class="prosjektrad sig">
 <a class="prosjektrad__bilde" href="{url}" tabindex="-1" aria-hidden="true">{bilde(navn, alt, "(min-width: 860px) 40vw, 100vw")}</a>
 <div class="prosjektrad__tekst">
-<p class="prosjektrad__meta"><span class="prosjektrad__nr">{i:02d}</span>{e(p["sted"])} · {e(p["tid"])} · {len(p["bilder"])} bilder</p>
+<p class="prosjektrad__meta"><span class="prosjektrad__nr">{i:02d}</span>{e(prosjektmeta(p))}</p>
 <h2><a href="{url}">{e(p["tittel"])}</a></h2>
 <p class="prosjektrad__ingress">{e(p["ingress"])}</p>
 <ul class="merkelapper" aria-label="Arbeid i prosjektet">{lapper}</ul>
