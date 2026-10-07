@@ -1,0 +1,8 @@
+# Alle tekstfiler lagres og sjekkes ut med LF, uansett maskin.
+# Uten dette gjør Windows (core.autocrlf=true) om linjeskiftene i arbeidskopien,
+# og da regner bygg.py ut andre versjonshasher enn filene som faktisk publiseres.
+* text=auto eol=lf
+*.webp binary
+*.jpg binary
+*.png binary
+*.woff2 binary
