@@ -23,7 +23,6 @@
   --aksent-lys: #f58c4d;
   --aksent-rgb: 236, 103, 26;
   --aksent-blekk: #140c05;
-  --gul: #f2c230;           /* tommestokken */
 
   --marg: clamp(20px, 5vw, 64px);
   --maks: 1360px;
@@ -310,33 +309,6 @@ body.meny-aapen { overflow: hidden; }
 .hero__fakta li { display: flex; gap: .7em; }
 .hero__fakta span { color: var(--dempet); }
 
-/* Tommestokken: tegnes inn fra venstre. Streker hver 10. px, 50. px og 100. px */
-.tommestokk {
-  display: flex; height: 30px; overflow: hidden;
-  background-color: var(--gul);
-  background-image:
-    linear-gradient(90deg, rgba(26, 20, 7, .95) 2px, transparent 0),
-    linear-gradient(90deg, rgba(26, 20, 7, .85) 1.5px, transparent 0),
-    linear-gradient(90deg, rgba(26, 20, 7, .7) 1px, transparent 0);
-  background-size: 100px 60%, 50px 42%, 10px 26%;
-  background-repeat: repeat-x;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, .45);
-  clip-path: inset(0 100% 0 0);
-  animation: maal 1.8s var(--ease) 1.25s both;
-}
-.tommestokk span {
-  position: relative; flex: 0 0 100px;
-  padding: 12px 0 0 6px;
-  font: 800 .7rem/1 var(--font); color: #1a1407; letter-spacing: -.02em;
-}
-/* leddene på en tommestokk sitter hver 20. cm */
-.tommestokk span:nth-child(2n)::after {
-  content: ""; position: absolute; right: -4px; top: 50%;
-  width: 8px; height: 8px; margin-top: -4px; border-radius: 50%;
-  background: #b38a1c; box-shadow: inset 0 0 0 1.5px rgba(26, 20, 7, .45);
-}
-@keyframes maal { to { clip-path: inset(0 0 0 0); } }
-
 @media (max-width: 760px) {
   .hero__media { object-position: 86% 50%; }
   .hero__skygge {
@@ -347,7 +319,7 @@ body.meny-aapen { overflow: hidden; }
   .hero__tittel { font-size: clamp(3.3rem, 19vw, 6rem); }
   .hero__under .knapperad { width: 100%; }
   .hero__under .knapp { flex: 1 1 auto; }
-  .hero__merk { top: auto; bottom: 86px; }
+  .hero__merk { top: auto; bottom: 56px; } /* over faktalinja (tommestokken under er fjernet) */
 }
 
 /* --- Bånd ------------------------------------------------------------------- */
@@ -376,11 +348,40 @@ body.meny-aapen { overflow: hidden; }
    seksjon starter nøyaktig på en hel meter. Bare der det er plass i margen. */
 .maalt { position: relative; }
 .maaler { display: none; }
+.maalebaand-krok, .maalebaand-spor { display: none; }
 @media (min-width: 1100px) {
   .maalebaand {
     position: absolute; left: 0; top: 0; z-index: 5;
     pointer-events: none;
     filter: drop-shadow(6px 0 18px rgba(0, 0, 0, .4));
+  }
+  /* Målebåndet sett ovenfra. Kroken er hektet på bunnen av heroen, og huset
+     står fast nederst i skjermen mens båndet trekkes ut av det. Bladet i begge
+     bildene er nøyaktig 34 px bredt, som båndet. js/side.js setter «top» på
+     båndet, kroken og sporet etter hvor heroen slutter. */
+  .maalebaand-krok {
+    display: block; position: absolute; z-index: 6;
+    left: -3.3px; top: 0;            /* bladet ligger 3,3 px inn i bildet */
+    width: 40.5px; height: auto;
+    pointer-events: none;
+    filter: drop-shadow(3px 4px 6px rgba(0, 0, 0, .5));
+  }
+  /* Sporet går fra kroken til slutten av målebånd-delen. Huset ligger nederst
+     i sporet og er sticky mot bunnen av skjermen: det følger kroken opp til det
+     når skjermkanten, blir stående der mens båndet trekkes ut, og stopper når
+     målebånd-delen er slutt. Klipsen stikker ut av skjermkanten med vilje, så
+     huset ikke dekker innholdet (slutter 52,7 px inn; margen er minst 55 px). */
+  .maalebaand-spor {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    position: absolute; z-index: 6;
+    left: -31.1px; top: 0; bottom: 0;  /* bladet ligger 31,1 px inn i bildet */
+    width: 84px;
+    pointer-events: none;
+  }
+  .maalebaand-hus {
+    display: block; position: sticky; bottom: 0;
+    flex: none; width: 84px; height: auto;
+    filter: drop-shadow(8px 14px 18px rgba(0, 0, 0, .55));
   }
   .maalebaand .meter rect { transition: fill .35s var(--ease); }
   .maalebaand .meter text { transition: fill .35s var(--ease); }

@@ -630,7 +630,6 @@ def hero():
             klasse="hero__media",
             prioritet=True,
         )
-    segmenter = "".join(f"<span>{i * 10 if i else ''}</span>" for i in range(40))
     return f'''<section class="hero" aria-labelledby="hero-tittel">
 <div class="hero__bakgrunn">
 {media}
@@ -656,7 +655,6 @@ def hero():
 <li><span>Ansatte</span>{ANSATTE}</li>
 <li><span>Base</span>{POSTSTED}, {FYLKE}</li>
 </ul>
-<div class="tommestokk" aria-hidden="true">{segmenter}</div>
 </div>
 </section>'''
 
@@ -844,7 +842,19 @@ def bygg_forside():
     # etter de faktiske posisjonene, og avlesningskroken viser hvor man er.
     maalt = "\n".join([tjenester(), prosjekter(), om_oss(), prosess(), kontakt()])
     maaler = '<div class="maaler" aria-hidden="true"><span class="maaler__tall">1,00</span></div>'
-    innhold = "\n".join([hero(), baand(), f'<div class="maalt">\n{maalt}\n</div>', maaler])
+    # Målebåndet sett ovenfra (Higgsfield, illustrasjon): kroken er hektet på
+    # bunnen av heroen, og huset står fast nederst i skjermen mens båndet trekkes
+    # ut av det. Huset ligger i et spor så det kan være sticky (se stil.css).
+    krok = (
+        f'<img class="maalebaand-krok" src="/merkevare/maalebaand-krok.webp?v={innholdsmerke("merkevare/maalebaand-krok.webp")}" '
+        'width="81" height="62" alt="" aria-hidden="true" decoding="async">'
+    )
+    hus = (
+        '<div class="maalebaand-spor" aria-hidden="true">'
+        f'<img class="maalebaand-hus" src="/merkevare/maalebaand-hus.webp?v={innholdsmerke("merkevare/maalebaand-hus.webp")}" '
+        'width="168" height="310" alt="" decoding="async"></div>'
+    )
+    innhold = "\n".join([hero(), baand(), f'<div class="maalt">\n{krok}\n{hus}\n{maalt}\n</div>', maaler])
     side(
         "index.html",
         f"Snekker og tømrer i {POSTSTED} | {FIRMA}",

@@ -234,6 +234,14 @@
     const maaler = document.querySelector(".maaler");
     const avles = maaler ? maaler.querySelector(".maaler__tall") : null;
     const bred = window.matchMedia("(min-width: 1100px)");
+    // Kroken (merkevare/maalebaand-krok.webp) er hektet på bunnen av heroen.
+    // Fliken er 4 px tykk, hele kroken 31 px høy. 0 m er ytterkanten av fliken.
+    const hero = document.querySelector(".hero");
+    const krok = maalt.querySelector(".maalebaand-krok");
+    const spor = maalt.querySelector(".maalebaand-spor");
+    const FLIK = 4;
+    const KROK_H = 31;
+    let start = 0; // båndets topp i forhold til .maalt (negativ: oppe ved heroen)
     let baand = null;
     let meterY = [];
     let merker = [];
@@ -250,32 +258,43 @@
       baand = null;
       merker = [];
       if (!bred.matches || seksjoner.length < 2) return;
-      const H = maalt.offsetHeight;
+      // Båndet starter i kroken ved bunnen av heroen (over det oransje båndet).
+      // Alle mål under er i båndets egne koordinater: 0 = ytterkanten av fliken.
+      start = hero ? hero.getBoundingClientRect().bottom - maalt.getBoundingClientRect().top - FLIK : 0;
+      const H = maalt.offsetHeight - start;
       // meterstreken ligger der etiketten står: toppen av seksjonen + polstringen
-      const y = seksjoner.map((s) => s.offsetTop + Number.parseFloat(getComputedStyle(s).paddingTop));
+      const y = seksjoner.map((s) => s.offsetTop + Number.parseFloat(getComputedStyle(s).paddingTop) - start);
       const n = y.length;
-      meterY = [y[0] - (y[1] - y[0]), ...y, y[n - 1] + (y[n - 1] - y[n - 2])];
+      meterY = [0, ...y, y[n - 1] + (y[n - 1] - y[n - 2])];
 
       baand = lag("svg", { class: "maalebaand", width: B, height: H, viewBox: `0 0 ${B} ${H}`, focusable: "false", "aria-hidden": "true" });
-      baand.appendChild(lag("rect", { width: B, height: H, fill: "#f2c230" }));
+      baand.style.top = `${start}px`;
+      if (krok) krok.style.top = `${start}px`;
+      // huset tar imot bladet rett under krokplata når båndet er rullet inn
+      if (spor) spor.style.top = `${start + KROK_H - 4}px`;
+      // samme gulfarge som bladet i bildene (målt); starter under krokplata
+      baand.appendChild(lag("rect", { y: KROK_H / 2, width: B, height: H - KROK_H / 2, fill: "#eec720" }));
       let cm = "";
       let halv = "";
       let dm = "";
-      const etiketter = lag("g", { fill: "#1a1407", "font-family": "Inter, system-ui, sans-serif", "font-size": 8.5, "font-weight": 800 });
+      const etiketter = lag("g", {
+        fill: "#1a1407", "font-family": "Inter, system-ui, sans-serif", "font-size": 8.5, "font-weight": 800, "text-anchor": "middle",
+      });
       for (let m = 0; m < meterY.length - 1; m++) {
         const a = meterY[m];
         const steg = (meterY[m + 1] - a) / 100;
         for (let c = 1; c < 100; c++) {
           const yy = a + c * steg;
-          if (yy < 0 || yy > H) continue;
+          if (yy < KROK_H || yy > H) continue; // under kroken synes de ikke uansett
           const t = yy.toFixed(1);
+          // streker fra begge kanter og tallene midt på, som på et ekte målebånd
           if (c % 10 === 0) {
-            dm += `M${B - 15} ${t}H${B}`;
-            etiketter.appendChild(lag("text", { x: 4, y: (yy + 3).toFixed(1) }, String(c)));
+            dm += `M0 ${t}H11M${B - 11} ${t}H${B}`;
+            etiketter.appendChild(lag("text", { x: B / 2, y: (yy + 3).toFixed(1) }, String(c)));
           } else if (c % 5 === 0) {
-            halv += `M${B - 10} ${t}H${B}`;
+            halv += `M0 ${t}H8M${B - 8} ${t}H${B}`;
           } else {
-            cm += `M${B - 6} ${t}H${B}`;
+            cm += `M0 ${t}H5M${B - 5} ${t}H${B}`;
           }
         }
       }
@@ -309,8 +328,8 @@
         return;
       }
       const r = maalt.getBoundingClientRect();
-      const yy = window.innerHeight * 0.5 - r.top;
-      const inne = yy >= 0 && yy <= r.height;
+      const yy = window.innerHeight * 0.5 - r.top - start;
+      const inne = yy >= 0 && yy <= r.height - start;
       maaler.classList.toggle("er-synlig", inne);
       if (!inne) return;
       let m = 0;
