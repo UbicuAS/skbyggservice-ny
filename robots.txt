@@ -1,0 +1,4 @@
+# Forhåndsvisning – ikke en side i drift.
+# Hver side har <meta name="robots" content="noindex">.
+User-agent: *
+Allow: /

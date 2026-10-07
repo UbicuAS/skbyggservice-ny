@@ -1,0 +1,16 @@
+{
+ "name": "SK Byggservice AS",
+ "short_name": "SK Byggservice",
+ "lang": "nb-NO",
+ "start_url": "/",
+ "display": "browser",
+ "background_color": "#0d0c0a",
+ "theme_color": "#0d0c0a",
+ "icons": [
+  {
+   "src": "/merkevare/favicon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml"
+  }
+ ]
+}
