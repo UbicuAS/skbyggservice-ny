@@ -40,8 +40,17 @@
 
 /* --- Grunnlag -------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--topp-h) + var(--banner-h) + 12px); }
-.har-banner { --banner-h: 34px; }
+/* --topp-total: alt som ligger fast øverst – statuslinja på iPhone (safe area),
+   forhåndsvisningsbanneret og toppfeltet. Brukes overalt der innhold må starte
+   nedenfor toppfeltet. */
+:root { --safe-topp: env(safe-area-inset-top, 0px); }
+:root:has(.har-banner), .har-banner { --banner-h: 34px; }
+:root, body { --topp-total: calc(var(--topp-h) + var(--banner-h) + var(--safe-topp)); }
+html {
+  -webkit-text-size-adjust: 100%; scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--topp-total) + 12px);
+  overflow-x: hidden; /* reserve for nettlesere uten overflow: clip (eldre iOS) – ingenting skal kunne dra siden sidelengs */
+}
 body {
   margin: 0;
   background: var(--bunn);
@@ -68,13 +77,13 @@ p { margin: 0 0 1em; }
 :focus-visible { outline: 3px solid var(--aksent); outline-offset: 3px; }
 ::selection { background: var(--aksent); color: var(--aksent-blekk); }
 
-.ramme { width: min(var(--maks), 100% - 2 * var(--marg)); margin-inline: auto; }
+.ramme { width: min(var(--maks), 100% - 2 * max(var(--marg), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px))); margin-inline: auto; }
 .usynlig { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .hopplenke { position: absolute; left: -9999px; top: 12px; z-index: 200; background: var(--aksent); color: var(--aksent-blekk); padding: .7em 1.1em; font-weight: 800; text-decoration: none; }
 .hopplenke:focus { left: 12px; }
 
 /* --- Typografi ------------------------------------------------------------- */
-h1, h2, h3 { margin: 0; font-weight: 900; text-transform: uppercase; letter-spacing: -.035em; line-height: .9; text-wrap: balance; }
+h1, h2, h3 { margin: 0; font-weight: 900; text-transform: uppercase; letter-spacing: -.035em; line-height: .9; text-wrap: balance; hyphens: manual; overflow-wrap: break-word; }
 h2 { font-size: clamp(2.5rem, 7.2vw, 6.2rem); hyphens: manual; overflow-wrap: break-word; }
 h3 { font-size: clamp(1.3rem, 2.2vw, 1.9rem); letter-spacing: -.02em; line-height: 1; }
 
@@ -111,17 +120,25 @@ h3 { font-size: clamp(1.3rem, 2.2vw, 1.9rem); letter-spacing: -.02em; line-heigh
 .knapp:hover, .knapp:focus-visible { border-color: var(--tekst); color: var(--aksent-blekk); }
 .knapp svg { flex: none; transition: transform .35s var(--ease); }
 .knapp:hover svg:last-child { transform: translateX(3px); }
-.knapp--tom { background: rgba(13, 12, 10, .35); color: var(--tekst); border-color: var(--strek-sterk); backdrop-filter: blur(6px); }
+.knapp--tom { background: rgba(13, 12, 10, .35); color: var(--tekst); border-color: var(--strek-sterk); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .knapp--tom:hover svg:last-child { transform: none; }
 .knapp--liten { --h: 44px; padding: 0 1.15em; font-size: .74rem; }
 
 /* --- Toppfelt --------------------------------------------------------------- */
 .topp {
-  position: fixed; inset: 0 0 auto; z-index: 60;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+  /* På iPhone strekker toppfeltet seg opp under statuslinja, så sidens innhold
+     aldri synes over toppfeltet når man ruller */
+  border-top: var(--safe-topp) solid #0d0c0a;
   border-bottom: 1px solid transparent;
   transition: background-color .35s var(--ease), border-color .35s var(--ease);
 }
-.topp.er-rullet, .undersiden .topp { background: rgba(13, 12, 10, .88); backdrop-filter: blur(14px) saturate(1.2); border-color: var(--strek); }
+/* Helt tett bakgrunn: med gjennomskinnelig toppfelt skimtet innholdet gjennom
+   på mobil (Marius, 7. okt 2026) – og uskarphet bak virker ikke i alle nettlesere. */
+.topp.er-rullet, .undersiden .topp {
+  background: #0d0c0a;
+  border-bottom-color: var(--strek);
+}
 .topp__inner { height: var(--topp-h); display: flex; align-items: center; gap: 2rem; }
 
 .logo { display: inline-flex; align-items: center; gap: .65rem; color: var(--tekst); text-decoration: none; flex: none; }
@@ -142,7 +159,7 @@ h3 { font-size: clamp(1.3rem, 2.2vw, 1.9rem); letter-spacing: -.02em; line-heigh
 .meny a:hover::after, .meny a:focus-visible::after { transform: scaleX(1); transform-origin: left; }
 
 .topp__hoyre { display: flex; align-items: center; gap: 1.25rem; }
-.topp__tlf { display: inline-flex; align-items: center; gap: .5rem; font: 500 .82rem/1 var(--mono); letter-spacing: .04em; text-decoration: none; }
+.topp__tlf { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-width: 44px; min-height: 44px; font: 500 .82rem/1 var(--mono); letter-spacing: .04em; text-decoration: none; }
 .topp__tlf svg { color: var(--aksent); }
 .topp__tlf:hover { color: var(--aksent); }
 
@@ -157,9 +174,10 @@ h3 { font-size: clamp(1.3rem, 2.2vw, 1.9rem); letter-spacing: -.02em; line-heigh
 .luke[aria-expanded="true"] span::after { transform: translateY(-6px) rotate(-45deg); }
 
 .mobilmeny {
-  position: fixed; inset: 0; z-index: 55;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 55;
   display: flex; flex-direction: column; justify-content: center; gap: 2rem;
-  padding: calc(var(--topp-h) + var(--banner-h) + 1rem) var(--marg) 2rem;
+  padding: calc(var(--topp-total) + 1rem) var(--marg) calc(2rem + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
   background: var(--bunn);
   visibility: hidden; opacity: 0;
   transition: opacity .35s var(--ease), visibility 0s linear .35s;
@@ -234,13 +252,13 @@ body.meny-aapen { overflow: hidden; }
 }
 .hero__merk {
   position: absolute; z-index: 2;
-  top: calc(var(--topp-h) + var(--banner-h) + 14px); right: var(--marg);
+  top: calc(var(--topp-total) + 14px); right: var(--marg);
   margin: 0;
   font: 500 .62rem/1 var(--mono); text-transform: uppercase; letter-spacing: .16em;
   color: rgba(238, 231, 220, .45);
 }
 
-.hero__innhold { position: relative; padding-top: calc(var(--topp-h) + var(--banner-h) + 6vh); padding-bottom: clamp(1.75rem, 4.5vh, 3.25rem); }
+.hero__innhold { position: relative; padding-top: calc(var(--topp-total) + 6vh); padding-bottom: clamp(1.75rem, 4.5vh, 3.25rem); }
 .hero__stikk::before { display: none; }
 .hero__stikk { color: var(--tekst-2); animation: inn .9s var(--ease) .15s both; }
 .prikk { position: relative; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--aksent); }
@@ -333,7 +351,8 @@ body.meny-aapen { overflow: hidden; }
 }
 
 /* --- Bånd ------------------------------------------------------------------- */
-.baand-ramme { position: relative; z-index: 3; overflow-x: clip; padding: 2.2rem 0; margin: -2.2rem 0; }
+.baand-ramme { position: relative; z-index: 3; overflow: hidden; padding: 2.2rem 0; margin: -2.2rem 0; }
+@supports (overflow: clip) { .baand-ramme { overflow: visible; overflow-x: clip; } }
 .baand {
   background: var(--aksent); color: var(--aksent-blekk);
   transform: rotate(-1.8deg) scale(1.05);
@@ -522,7 +541,7 @@ body.meny-aapen { overflow: hidden; }
 @media (min-width: 1000px) { .kontakt__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 5.5rem; align-items: start; } }
 .kontakt__ingress { max-width: 42ch; margin-top: 1.6rem; color: var(--tekst-2); font-size: 1.1rem; }
 .kontakt__tlf {
-  display: inline-block; margin: 1.6rem 0 1.4rem;
+  display: inline-block; margin: 1.6rem 0 1.4rem; padding-block: .25rem;
   font: 900 clamp(2.2rem, 5.4vw, 4.2rem)/1 var(--font); letter-spacing: -.035em;
   color: var(--aksent); text-decoration: none;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 3px no-repeat;
@@ -530,7 +549,7 @@ body.meny-aapen { overflow: hidden; }
 }
 .kontakt__tlf:hover { background-size: 100% 3px; }
 .kontakt__liste { list-style: none; margin: 0; padding: 0; font: 500 .82rem/2 var(--mono); color: var(--dempet); }
-.kontakt__liste a { color: var(--tekst); text-decoration: none; }
+.kontakt__liste a { display: inline-block; padding: .55rem 0; margin: -.55rem 0; color: var(--tekst); text-decoration: none; }
 .kontakt__liste a:hover { color: var(--aksent); }
 
 .skjema {
@@ -563,6 +582,7 @@ body.meny-aapen { overflow: hidden; }
 .felt input:focus, .felt select:focus, .felt textarea:focus { outline: none; border-color: var(--aksent); box-shadow: 0 0 0 3px rgba(var(--aksent-rgb), .28); }
 .felt input::placeholder { color: #6f675d; }
 .skjult-felt { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.skjult-felt input { font-size: 16px; }
 .skjema__send { width: 100%; margin-top: .4rem; }
 .skjema__status:empty { display: none; }
 .skjema__status { margin: 1.1rem 0 0; padding: 1rem 1.15rem; border-left: 3px solid var(--aksent); background: rgba(var(--aksent-rgb), .09); color: var(--tekst); }
@@ -574,7 +594,8 @@ body.meny-aapen { overflow: hidden; }
 @media (min-width: 900px) { .bunn__topp { grid-template-columns: 1.5fr 1fr 1fr; } }
 .bunn h2 { margin-bottom: 1.2rem; font: 500 .7rem/1 var(--mono); letter-spacing: .16em; color: var(--dempet); }
 .bunn ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
-.bunn a { text-decoration: none; }
+.bunn a { display: inline-block; padding: .45rem 0; margin: -.45rem 0; text-decoration: none; }
+.bunn__strek a { padding: .85rem .2rem; margin: -.85rem -.2rem; }
 .bunn a:hover { color: var(--aksent); }
 .bunn__om { max-width: 38ch; margin-top: 1.3rem; color: var(--dempet); }
 .bunn__kjempe { width: min(var(--maks), 100% - 2 * var(--marg)); height: auto; margin: clamp(3rem, 7vw, 5.5rem) auto -1%; overflow: visible; }
@@ -639,14 +660,14 @@ body.meny-aapen { overflow: hidden; }
 .prosjektkort--fb p:not(.prosjektkort__meta) { color: var(--dempet); max-width: 30ch; }
 
 /* --- Prosjektside ------------------------------------------------------------ */
-.prosjektside { padding: calc(var(--topp-h) + var(--banner-h) + clamp(2rem, 6vw, 4.5rem)) 0 clamp(4rem, 9vw, 7rem); }
+.prosjektside { padding: calc(var(--topp-total) + clamp(2rem, 6vw, 4.5rem)) 0 clamp(4rem, 9vw, 7rem); }
 .brodsmuler {
   display: flex; flex-wrap: wrap; gap: .55rem; margin-bottom: 2.2rem;
   font: 500 .72rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--dempet);
 }
-.brodsmuler a { text-decoration: none; }
+.brodsmuler a { display: inline-block; padding: .85rem .3rem; margin: -.85rem -.3rem; text-decoration: none; }
 .brodsmuler a:hover { color: var(--aksent); }
-.prosjektside h1 { max-width: 15ch; margin-bottom: clamp(2rem, 4vw, 3rem); font-size: clamp(2.5rem, 7.5vw, 6.2rem); line-height: 1; hyphens: manual; } /* komma og p henger ned – trenger mer luft enn heroen */
+.prosjektside h1 { max-width: 15ch; margin-bottom: clamp(2rem, 4vw, 3rem); font-size: clamp(2.1rem, 10.5vw, 6.2rem); line-height: 1; hyphens: manual; } /* komma og p henger ned – trenger mer luft enn heroen */
 .prosjektside__topp { display: grid; gap: 2.5rem; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
 @media (min-width: 960px) { .prosjektside__topp { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 5rem; } }
 .prosjektside__ingress { max-width: 50ch; color: var(--tekst-2); font-size: clamp(1.1rem, 1.5vw, 1.3rem); }
@@ -695,7 +716,7 @@ body.meny-aapen { overflow: hidden; }
 .prosjektrad__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem; margin: 0; font: 500 .72rem/1.3 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--dempet); }
 .prosjektrad__nr { color: var(--aksent); }
 .prosjektrad h2 { margin: .9rem 0 1rem; font-size: clamp(1.8rem, 3.6vw, 3rem); line-height: 1; }
-.prosjektrad h2 a { text-decoration: none; }
+.prosjektrad h2 a { display: inline-block; padding-block: .2rem; text-decoration: none; }
 .prosjektrad h2 a:hover, .prosjektrad h2 a:focus-visible { color: var(--aksent); }
 .prosjektrad__ingress { max-width: 54ch; color: var(--tekst-2); }
 .merkelapper { display: flex; flex-wrap: wrap; gap: .45rem; margin: 0 0 1.6rem; padding: 0; list-style: none; }
@@ -724,22 +745,43 @@ body.meny-aapen { overflow: hidden; }
 .lysboks__teller { position: absolute; bottom: 20px; left: 50%; translate: -50% 0; margin: 0; font: 500 .72rem/1 var(--mono); letter-spacing: .14em; color: var(--dempet); }
 
 /* --- Undersider ------------------------------------------------------------- */
-.tekstside { padding: calc(var(--topp-h) + var(--banner-h) + clamp(3rem, 8vw, 6rem)) 0 clamp(4rem, 9vw, 7rem); }
+.tekstside { padding: calc(var(--topp-total) + clamp(3rem, 8vw, 6rem)) 0 clamp(4rem, 9vw, 7rem); }
 .tekstside__ramme { max-width: 760px; }
-.tekstside h1 { font-size: clamp(2.4rem, 7vw, 4.6rem); margin-bottom: 1.6rem; }
+.tekstside h1 { font-size: clamp(2rem, 9vw, 4.6rem); margin-bottom: 1.6rem; }
 .tekstside h2 { font-size: clamp(1.25rem, 2.4vw, 1.6rem); letter-spacing: -.015em; line-height: 1.1; margin: 2.6rem 0 .9rem; }
 .tekstside p { color: var(--tekst-2); }
 .tekstside a { color: var(--aksent); }
 .tekstside__ingress { font-size: 1.2rem; }
 .tekstside__merk { padding: .9rem 1.1rem; border-left: 3px solid var(--aksent); background: rgba(var(--aksent-rgb), .09); }
 
-.tom-side { min-height: 100svh; display: flex; align-items: center; padding: calc(var(--topp-h) + var(--banner-h) + 3rem) 0 4rem; }
+.tom-side { min-height: 100svh; display: flex; align-items: center; padding: calc(var(--topp-total) + 3rem) 0 4rem; }
 .tom-side h1 { font-size: clamp(3rem, 10vw, 8rem); line-height: .86; margin-bottom: 1.6rem; }
 .tom-side p { max-width: 44ch; color: var(--tekst-2); margin-bottom: 2rem; }
 
 /* --- Innsig ved rulling (bare med skript – uten står alt synlig) ------------ */
 .js .sig { opacity: 0; transform: translateY(30px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
 .js .sig.synlig { opacity: 1; transform: none; }
+
+/* --- Berøringsskjerm: jevn rulling ------------------------------------------------
+   Fullskjerms blandingslag (korn), bakgrunnsuskarphet og blandingsmodus over
+   heroen må males om for hver rulleramme og gir hakking på mobil. */
+@media (hover: none) {
+  body::after { display: none; }
+  .knapp--tom { background: rgba(13, 12, 10, .6); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .hero__lys { mix-blend-mode: normal; opacity: .7; }
+  .mobilmeny a, .luke { -webkit-tap-highlight-color: transparent; }
+}
+/* Animasjoner står stille når de er ute av syne (klassen settes av js/side.js) */
+.ute-av-syne .hero__lys, .ute-av-syne .baand__spor, .ute-av-syne .prikk::after { animation-play-state: paused; }
+
+/* Siden bak står stille mens et bilde er åpent i lysboksen */
+html.lysboks-aapen { overflow: hidden; }
+.lysboks-dialog, .lysboks-dialog img { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+@media (max-width: 620px) {
+  .lysboks__forrige, .lysboks__neste { top: auto; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); translate: none; }
+  .lysboks__teller { bottom: calc(30px + env(safe-area-inset-bottom, 0px)); }
+  .lysboks__lukk { top: calc(14px + var(--safe-topp)); }
+}
 
 /* --- Redusert bevegelse ----------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {

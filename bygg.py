@@ -88,7 +88,7 @@ BANNER = (
     f'''<div class="forhandsvisning" role="note">
 <strong>Forhåndsvisning</strong><span class="forhandsvisning__sep" aria-hidden="true">·</span>
 <span class="forhandsvisning__lang">Utkast til ny nettside for {FIRMA}, laget av Ubicu AS. Ikke publisert – siden er skjult for søkemotorer.</span>
-<span class="forhandsvisning__kort">Utkast til ny nettside – ikke publisert</span>
+<span class="forhandsvisning__kort">Utkast – ikke publisert</span>
 </div>'''
     if FORHANDSVISNING
     else ""
@@ -112,13 +112,13 @@ TJENESTER = [
     ),
     (
         "rehabilitering",
-        "Rehabilitering",
+        "Rehabili&shy;tering",
         "Bad og vaskerom, vinduer og dører, kledning, etterisolering og innvendig "
         "oppussing. Vi tar vare på det som er godt, og bytter ut det som ikke er det.",
     ),
     (
         "massetransport",
-        "Massetransport",
+        "Masse&shy;transport",
         "Vi kjører pukk, singel, matjord og andre masser til private og bedrifter "
         "– akkurat den typen og mengden du trenger.",
     ),
@@ -365,6 +365,23 @@ def e(tekst):
     return html.escape(str(tekst), quote=True)
 
 
+# Lange ord som ellers sprenger bredden på smale mobiler (320–375 px).
+MYKE_DELINGER = {
+    "Etterisolering": "Etter&shy;isolering",
+    "Massetransport": "Masse&shy;transport",
+    "Rehabilitering": "Rehabili&shy;tering",
+    "Garasjebygg": "Garasje&shy;bygg",
+}
+
+
+def myk(tekst):
+    """Escaper og legger inn myke orddelinger – bare til synlige overskrifter."""
+    ut = e(tekst)
+    for ord_, delt in MYKE_DELINGER.items():
+        ut = ut.replace(ord_, delt)
+    return ut
+
+
 def innholdsmerke(rel):
     """Kort hash av en fils innhold, brukt som versjon i URL-en.
 
@@ -550,7 +567,7 @@ def side(filsti, tittel, beskrivelse, kanonisk, innhold, ld=(), ekstra_hode="", 
 <html lang="nb-NO">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="{CSP}">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>{e(tittel)}</title>
@@ -687,7 +704,7 @@ def prosjektkort(p):
 <div class="prosjektkort__bilde">{bilde(navn, alt, KORT_SIZES)}</div>
 <div class="prosjektkort__tekst">
 <p class="prosjektkort__meta">{e(prosjektmeta(p))}</p>
-<h3>{e(p["tittel"])}</h3>
+<h3>{myk(p["tittel"])}</h3>
 <span class="prosjektkort__lenke">Se prosjektet {PIL_IKON}</span>
 </div>
 </a>'''
@@ -874,7 +891,7 @@ def bygg_prosjektsider():
 <div class="ramme">
 <nav class="brodsmuler" aria-label="Brødsmuler"><a href="/">Forside</a><span aria-hidden="true">/</span><a href="/prosjekter/">Prosjekter</a><span aria-hidden="true">/</span><span aria-current="page">{e(p["tittel"])}</span></nav>
 <p class="stikk">Prosjekt · {e(prosjektmeta(p, bilder=False))}</p>
-<h1>{e(p["tittel"])}</h1>
+<h1>{myk(p["tittel"])}</h1>
 <div class="prosjektside__topp">
 <div>
 <p class="prosjektside__ingress">{e(p["ingress"])}</p>
@@ -923,7 +940,7 @@ def bygg_prosjektoversikt():
 <a class="prosjektrad__bilde" href="{url}" tabindex="-1" aria-hidden="true">{bilde(navn, alt, "(min-width: 860px) 40vw, 100vw")}</a>
 <div class="prosjektrad__tekst">
 <p class="prosjektrad__meta"><span class="prosjektrad__nr">{i:02d}</span>{e(prosjektmeta(p))}</p>
-<h2><a href="{url}">{e(p["tittel"])}</a></h2>
+<h2><a href="{url}">{myk(p["tittel"])}</a></h2>
 <p class="prosjektrad__ingress">{e(p["ingress"])}</p>
 <ul class="merkelapper" aria-label="Arbeid i prosjektet">{lapper}</ul>
 <a class="prosjektkort__lenke" href="{url}" aria-hidden="true" tabindex="-1">Se prosjektet {PIL_IKON}</a>

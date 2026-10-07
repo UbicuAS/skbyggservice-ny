@@ -7,6 +7,11 @@
   const rot = document.documentElement;
   rot.classList.add("js");
   const reduser = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const beroring = window.matchMedia("(hover: none)").matches;
+  const lytt = (mq, fn) => {
+    if (mq.addEventListener) mq.addEventListener("change", fn);
+    else if (mq.addListener) mq.addListener(fn);
+  };
 
   // --- Årstall i bunnen -------------------------------------------------------
   const aar = document.getElementById("aarstall");
@@ -44,6 +49,18 @@
         luke.focus();
       }
     });
+    lytt(window.matchMedia("(min-width: 1061px)"), (h) => {
+      if (h.matches) sett(false);
+    });
+  }
+
+  // --- Animasjoner pauses når de er ute av syne -------------------------------
+  // Sparer batteri og gir jevnere rulling på mobil (se .ute-av-syne i stil.css).
+  if ("IntersectionObserver" in window) {
+    const pause = new IntersectionObserver((oppf) => {
+      for (const o of oppf) o.target.classList.toggle("ute-av-syne", !o.isIntersecting);
+    });
+    document.querySelectorAll(".hero, .baand-ramme").forEach((el) => pause.observe(el));
   }
 
   // --- Innsig ved rulling -----------------------------------------------------
@@ -133,6 +150,8 @@
     dialog.setAttribute("aria-label", "Prosjektbilde");
     const stort = document.createElement("img");
     stort.alt = "";
+    stort.draggable = false; // ellers starter nettleserens egen «dra bildet» og sveipet avbrytes
+    stort.addEventListener("dragstart", (h) => h.preventDefault());
     const knapp = (klasse, tegn, etikett) => {
       const b = document.createElement("button");
       b.type = "button";
@@ -157,17 +176,45 @@
       stort.alt = lite ? lite.alt : "";
       teller.textContent = `${nr + 1} / ${lysbokser.length}`;
     };
+    let apnetFra = null;
     lysbokser.forEach((a, i) => {
       a.addEventListener("click", (h) => {
         h.preventDefault();
+        apnetFra = a;
         vis(i);
         dialog.showModal();
+        rot.classList.add("lysboks-aapen");
       });
+    });
+    dialog.addEventListener("close", () => {
+      rot.classList.remove("lysboks-aapen");
+      if (apnetFra) apnetFra.focus({ preventScroll: true });
     });
     lukk.addEventListener("click", () => dialog.close());
     forrige.addEventListener("click", () => vis(nr - 1));
     neste.addEventListener("click", () => vis(nr + 1));
+    // Sveip til siden for neste/forrige bilde (mobil)
+    let start = null;
+    let sveipet = false;
+    dialog.addEventListener("pointerdown", (h) => {
+      start = { x: h.clientX, y: h.clientY };
+      sveipet = false;
+    });
+    dialog.addEventListener("pointerup", (h) => {
+      if (!start) return;
+      const dx = h.clientX - start.x;
+      const dy = h.clientY - start.y;
+      start = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+        sveipet = true;
+        vis(dx < 0 ? nr + 1 : nr - 1);
+      }
+    });
     dialog.addEventListener("click", (h) => {
+      if (sveipet) {
+        sveipet = false;
+        return;
+      }
       if (h.target === dialog) dialog.close();
     });
     dialog.addEventListener("keydown", (h) => {
@@ -295,7 +342,7 @@
     };
     if ("ResizeObserver" in window) new ResizeObserver(tegnSnart).observe(maalt);
     window.addEventListener("resize", tegnSnart, { passive: true });
-    bred.addEventListener("change", tegn);
+    lytt(bred, tegn);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(tegn);
     tegn();
   }
@@ -377,14 +424,14 @@
 
   const tilpass = () => {
     const r = hero.getBoundingClientRect();
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dpr = Math.min(window.devicePixelRatio || 1, beroring ? 1.5 : 2);
     B = r.width;
     H = r.height;
     lerret.width = Math.round(B * dpr);
     lerret.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     plasserLys();
-    const antall = Math.max(28, Math.min(110, Math.round((B * H) / 15000)));
+    const antall = Math.max(24, Math.min(beroring ? 45 : 110, Math.round((B * H) / 15000)));
     partikler = Array.from({ length: antall }, () => ny(true));
   };
 
@@ -471,7 +518,7 @@
     }).observe(hero);
   }
   document.addEventListener("visibilitychange", start);
-  reduser.addEventListener("change", (h) => {
+  lytt(reduser, (h) => {
     if (h.matches) {
       synlig = false;
       ctx.clearRect(0, 0, B, H);
