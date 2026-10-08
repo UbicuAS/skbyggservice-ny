@@ -15,6 +15,7 @@ import hashlib
 import html
 import json
 import re
+from datetime import date, timedelta
 from pathlib import Path
 
 try:
@@ -132,6 +133,23 @@ TJENESTER = [
 ]
 
 FACEBOOK = "https://www.facebook.com/SKbyggserviceas"
+
+# Sentral godkjenning (DiBK), kontrollert i det offentlige registeret 8. okt 2026.
+# Siden skal aldri påstå en godkjenning som har gått ut: bygget stopper når datoen
+# er passert, og varsler 60 dager før. Fornyes den: sjekk registeret, rett datoen.
+SENTRAL_GODKJENNING = {
+    "gyldig_til": date(2027, 2, 19),
+    "register": f"https://sgregister.dibk.no/enterprises/{ORGNR.replace(' ', '')}",
+    "tiltaksklasse": 1,
+    "omraader": [
+        "Tømrerarbeid og montering av trekonstruksjoner",
+        "Veg- og grunnarbeider",
+        "Vannforsynings- og avløpsanlegg",
+        "Landskapsutforming",
+    ],
+}
+# Gaselle-bedrift, kåret av Dagens Næringsliv (opplyst av Marius 8. okt 2026)
+GASELLE_AAR = 2025
 
 # Prosjektene er hentet fra kundens egen Facebook-side 7. okt 2026, nyeste først.
 # «sitat» er det firmaet selv skrev i innlegget. Der det mangler, er tittel,
@@ -359,6 +377,16 @@ TLF_IKON = (
     'stroke-width="1.5" stroke-linejoin="round"/></svg>'
 )
 STJERNE = '<span class="stjerne" aria-hidden="true"></span>'
+HAKE_IKON = (
+    '<svg width="22" height="22" viewBox="0 0 16 16" fill="none" aria-hidden="true" '
+    'focusable="false"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="currentColor" '
+    'stroke-width="2" stroke-linecap="square"/></svg>'
+)
+VEKST_IKON = (
+    '<svg width="22" height="22" viewBox="0 0 16 16" fill="none" aria-hidden="true" '
+    'focusable="false"><path d="M1.5 12.5l4.5-4.5 3 3 5.5-6M10 5h4.5v4.5" stroke="currentColor" '
+    'stroke-width="1.8" stroke-linecap="square"/></svg>'
+)
 
 
 # --- Hjelpere ---------------------------------------------------------------
@@ -476,6 +504,14 @@ ORGANISASJON = {
         {"@type": "AdministrativeArea", "name": FYLKE},
     ],
     "knowsAbout": [t[1].replace("&shy;", "") for t in TJENESTER],
+    "hasCredential": {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Sentral godkjenning for ansvarsrett",
+        "credentialCategory": "Sentral godkjenning",
+        "url": SENTRAL_GODKJENNING["register"],
+        "recognizedBy": {"@type": "GovernmentOrganization", "name": "Direktoratet for byggkvalitet", "url": "https://dibk.no"},
+    },
+    "award": f"Gaselle-bedrift {GASELLE_AAR} (Dagens Næringsliv)",
 }
 
 NETTSTED = {
@@ -655,6 +691,8 @@ def hero():
 <li><span>Etablert</span>{STIFTET}</li>
 <li><span>Ansatte</span>{ANSATTE}</li>
 <li><span>Base</span>{POSTSTED}, {FYLKE}</li>
+<li><span>Sentralt</span>godkjent</li>
+<li><span>Gaselle</span>{GASELLE_AAR}</li>
 </ul>
 </div>
 </section>'''
@@ -762,8 +800,28 @@ def om_oss():
 <div class="sig"><b data-tell="{ANSATTE}">{ANSATTE}</b><span>Ansatte</span></div>
 <div class="sig"><b data-tell="{len(TJENESTER)}">{len(TJENESTER)}</b><span>Fagområder</span></div>
 </div>
+{utmerkelser()}
 </div>
 </section>'''
+
+
+def utmerkelser():
+    g = SENTRAL_GODKJENNING
+    omraader = "".join(f"<li>{e(o)}</li>" for o in g["omraader"])
+    return f'''<div class="utmerket">
+<div class="utmerket__kort sig">
+<span class="utmerket__merke">{HAKE_IKON}</span>
+<h3>Sentralt godkjent</h3>
+<p>Godkjent av Direktoratet for byggkvalitet som utførende i tiltaksklasse {g["tiltaksklasse"]} innen:</p>
+<ul class="utmerket__liste">{omraader}</ul>
+<a class="utmerket__lenke" href="{e(g["register"])}" rel="noopener">Se godkjenningen i registeret {PIL_IKON}</a>
+</div>
+<div class="utmerket__kort sig">
+<span class="utmerket__merke">{VEKST_IKON}</span>
+<h3>Gaselle-bedrift {GASELLE_AAR}</h3>
+<p>Kåret av Dagens Næringsliv, som hvert år kårer Norges mest fremgangsrike bedrifter.</p>
+</div>
+</div>'''
 
 
 def prosess():
@@ -1092,7 +1150,21 @@ def bygg_manifest():
     )
 
 
+def sjekk_godkjenning():
+    """Stopper bygget hvis siden ville påstått en utløpt sentral godkjenning."""
+    til = SENTRAL_GODKJENNING["gyldig_til"]
+    idag = date.today()
+    if idag > til:
+        raise SystemExit(
+            f"STOPP: sentral godkjenning gikk ut {til:%d.%m.%Y}. Sjekk {SENTRAL_GODKJENNING['register']} "
+            "og rett datoen i SENTRAL_GODKJENNING – eller fjern godkjenningen fra siden."
+        )
+    if idag > til - timedelta(days=60):
+        print(f"OBS: sentral godkjenning går ut {til:%d.%m.%Y}. Sjekk om den er fornyet.")
+
+
 def main():
+    sjekk_godkjenning()
     bygg_forside()
     bygg_prosjektsider()
     bygg_prosjektoversikt()

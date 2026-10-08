@@ -35,6 +35,8 @@ KJENTE = (
     "https://www.facebook.com/SKbyggserviceas",
     "https://www.datatilsynet.no",
     "http://www.w3.org",
+    "https://sgregister.dibk.no/enterprises/925496774",  # sentral godkjenning (DiBKs register)
+    "https://dibk.no",                                  # utsteder av godkjenningen (JSON-LD)
 )
 feil = []
 
