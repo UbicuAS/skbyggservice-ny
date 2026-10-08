@@ -257,13 +257,6 @@ body.meny-aapen { overflow: hidden; }
     linear-gradient(0deg, rgba(10, 9, 8, .96) 0%, rgba(10, 9, 8, .5) 22%, rgba(10, 9, 8, 0) 42%),
     linear-gradient(180deg, rgba(10, 9, 8, .7) 0%, rgba(10, 9, 8, 0) 20%);
 }
-.hero__merk {
-  position: absolute; z-index: 2;
-  top: calc(var(--topp-total) + 14px); right: var(--marg);
-  margin: 0;
-  font: 500 .62rem/1 var(--mono); text-transform: uppercase; letter-spacing: .16em;
-  color: rgba(238, 231, 220, .45);
-}
 
 /* h1 = linja med søkeord (.hero__stikk) + «Bygget for å stå.» (.hero__tittel) */
 .hero__h1 { margin: 0; }
@@ -334,9 +327,6 @@ body.meny-aapen { overflow: hidden; }
   .hero__tittel { font-size: clamp(3.3rem, 19vw, 6rem); }
   .hero__under .knapperad { width: 100%; }
   .hero__under .knapp { flex: 1 1 auto; }
-  /* I flyten rett over faktalinja, så merket aldri havner oppå knapper eller fakta */
-  .hero__merk { position: static; order: 1; align-self: flex-end; margin: 0 var(--marg) .6rem; }
-  .hero__fot { order: 2; }
 }
 
 /* --- Bånd ------------------------------------------------------------------- */

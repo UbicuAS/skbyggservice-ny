@@ -743,7 +743,6 @@ def hero():
 <canvas class="hero__flis" aria-hidden="true"></canvas>
 <div class="hero__skygge" aria-hidden="true"></div>
 </div>
-<p class="hero__merk" aria-hidden="true">Illustrasjon</p>
 <div class="ramme hero__innhold">
 <h1 class="hero__h1" id="hero-tittel"><span class="stikk hero__stikk"><span class="prikk" aria-hidden="true"></span>Snekker · Tømrer · Graving · Massetransport – {POSTSTED}</span> <span class="hero__tittel"><span class="linje"><span>Bygget</span></span> <span class="linje"><span>for å</span></span> <span class="linje"><span class="hero__fyll">stå.</span></span></span></h1>
 <div class="hero__under">
