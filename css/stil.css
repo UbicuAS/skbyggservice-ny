@@ -787,6 +787,20 @@ body.meny-aapen { overflow: hidden; }
 .tekstside p { color: var(--tekst-2); }
 .tekstside a { color: var(--aksent); }
 .tekstside__ingress { font-size: 1.2rem; }
+/* Samarbeidspartnere. Ubicu-logoen får luft rundt seg (profilmanualen). */
+.partner {
+  margin-top: 2.6rem; padding: clamp(1.4rem, 4vw, 2.5rem);
+  background: var(--flate); border: 1px solid var(--strek); border-radius: var(--radius);
+}
+.partner__logo { display: block; width: clamp(150px, 32vw, 210px); height: auto; margin-bottom: 1.8rem; }
+.tekstside .partner__fag { margin: 0; font: 500 .74rem/1.3 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--aksent); }
+.tekstside .partner h2 { margin: .55rem 0 .8rem; }
+.partner__lenke { display: inline-flex; align-items: center; gap: .5em; min-height: 44px; margin-top: .4rem; font-weight: 600; text-decoration: none; }
+.partner__lenke:hover, .partner__lenke:focus-visible { text-decoration: underline; }
+.tekstside .knapperad { margin-top: 2.6rem; }
+.tekstside a.knapp { color: var(--aksent-blekk); }
+/* lenken til samarbeidspartnere i «Slik jobber vi» */
+.steg p a { color: var(--aksent); text-decoration: underline; text-underline-offset: .2em; }
 .tekstside__merk { padding: .9rem 1.1rem; border-left: 3px solid var(--aksent); background: rgba(var(--aksent-rgb), .09); }
 
 .tom-side { min-height: 100svh; display: flex; align-items: center; padding: calc(var(--topp-total) + 3rem) 0 4rem; }

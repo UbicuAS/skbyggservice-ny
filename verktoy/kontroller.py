@@ -37,6 +37,7 @@ KJENTE = (
     "http://www.w3.org",
     "https://sgregister.dibk.no/enterprises/925496774",  # sentral godkjenning (DiBKs register)
     "https://dibk.no",                                  # utsteder av godkjenningen (JSON-LD)
+    "https://ubicu.no",                                 # samarbeidspartner (søknader og tegninger)
 )
 feil = []
 

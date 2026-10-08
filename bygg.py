@@ -101,6 +101,28 @@ NAV = [
     ("/prosjekter/", "Prosjekter"),
     ("/#om-oss", "Om oss"),
     ("/#prosess", "Slik jobber vi"),
+    ("/samarbeidspartnere/", "Samarbeid"),
+]
+
+# Samarbeidspartnere. Ubicu: teksten bygger på Ubicus egen beskrivelse på ubicu.no
+# (tegninger, ansvarlig søker, nabovarsel, 3D-visualisering). Logoen er den hvite
+# varianten fra Ubicus logopakke, uendret (profilmanualen: -white på mørk bunn).
+UBICU_URL = "https://ubicu.no"
+SAMARBEIDSPARTNERE = [
+    {
+        "id": "ubicu",
+        "navn": "Ubicu AS",
+        "fag": "Byggesøknader og tegninger",
+        "logo": "merkevare/ubicu-logo-hvit.svg",
+        "logo_mal": (362, 101),
+        "url": UBICU_URL,
+        "lenketekst": "ubicu.no",
+        "tekst": (
+            "Trenger jobben byggesøknad, gjør vi den sammen med Ubicu. De lager tegningene, "
+            "sender nabovarsel og tar rollen som ansvarlig søker overfor kommunen – med "
+            "3D-visualisering, så du ser bygget før det står der. Så bygger vi."
+        ),
+    },
 ]
 
 # (nøkkel, tittel, tekst). Nøkkelen kobler raden til valget i skjemaet.
@@ -360,7 +382,8 @@ def prosjektmeta(p, bilder=True):
 
 STEG = [
     ("Befaring", "Vi kommer ut, ser på jobben og hører hva du vil ha. Da blir tilbudet riktig fra start."),
-    ("Tilbud", "Du får et skriftlig tilbud med hva som skal gjøres, hva det koster og når vi kan begynne."),
+    ("Tilbud", "Du får et skriftlig tilbud med hva som skal gjøres, hva det koster og når vi kan begynne. "
+               'Trenger jobben byggesøknad, ordner vi den sammen med <a href="/samarbeidspartnere/">Ubicu</a>.'),
     ("Bygging", "Vi holder deg oppdatert underveis, sier fra tidlig hvis noe endrer seg, og rydder etter oss."),
     ("Overlevering", "Vi går gjennom jobben sammen med deg før vi sier oss ferdige."),
 ]
@@ -588,7 +611,7 @@ def bunn():
 <svg class="bunn__kjempe" viewBox="0 0 1000 118" aria-hidden="true" focusable="false"><text x="0" y="104" textLength="1000" lengthAdjust="spacingAndGlyphs">SK BYGGSERVICE</text></svg>
 <div class="ramme bunn__strek">
 <p>© <span id="aarstall">2026</span> {FIRMA} · Org.nr. {ORGNR}</p>
-<p><a href="/personvern/">Personvern</a></p>
+<p><a href="/personvern/">Personvern</a> · Nettside laget i samarbeid med <a href="{UBICU_URL}" rel="noopener">Ubicu AS</a></p>
 </div>
 </footer>
 <script src="/js/side.js?v={innholdsmerke('js/side.js')}" defer></script>'''
@@ -1042,6 +1065,37 @@ def bygg_prosjektoversikt():
 
 
 # --- Personvern -------------------------------------------------------------
+def bygg_samarbeidspartnere():
+    kort = "\n".join(
+        f'''<section class="partner" aria-labelledby="partner-{p["id"]}">
+<img class="partner__logo" src="/{p["logo"]}?v={innholdsmerke(p["logo"])}" width="{p["logo_mal"][0]}" height="{p["logo_mal"][1]}" alt="{e(p["navn"])}" decoding="async">
+<p class="partner__fag">{e(p["fag"])}</p>
+<h2 id="partner-{p["id"]}">{e(p["navn"])}</h2>
+<p>{e(p["tekst"])}</p>
+<a class="partner__lenke" href="{e(p["url"])}" rel="noopener">{e(p["lenketekst"])} {PIL_IKON}</a>
+</section>'''
+        for p in SAMARBEIDSPARTNERE
+    )
+    innhold = f'''<article class="tekstside">
+<div class="ramme tekstside__ramme">
+<p class="stikk">Samarbeid</p>
+<h1>Samarbeids&shy;partnere</h1>
+<p class="tekstside__ingress">Vi bygger. Til det som må på plass før og rundt byggingen, har vi faste partnere vi stoler på – så du har ett lag hele veien.</p>
+{kort}
+<div class="knapperad"><a class="knapp" href="/#kontakt">Be om befaring {PIL_IKON}</a></div>
+</div>
+</article>'''
+    side(
+        "samarbeidspartnere/index.html",
+        f"Samarbeidspartnere | {FIRMA}",
+        f"{FIRMA} samarbeider med Ubicu AS om byggesøknader og tegninger – ett lag fra tegning til ferdig bygg.",
+        "/samarbeidspartnere/",
+        innhold,
+        ld=(brodsmuler_ld([("Forside", "/"), ("Samarbeidspartnere", "/samarbeidspartnere/")]),),
+        kropp_klasse="undersiden",
+    )
+
+
 def bygg_personvern():
     utkast = (
         '<p class="tekstside__merk">Utkast. Teksten må gjennomgås og godkjennes av '
@@ -1099,7 +1153,7 @@ def bygg_404():
 
 
 # --- Faste filer ------------------------------------------------------------
-SIDER_FOR_SITEMAP = ["/", "/prosjekter/", "/personvern/"] + [f"/prosjekter/{p['slug']}/" for p in PROSJEKTER]
+SIDER_FOR_SITEMAP = ["/", "/prosjekter/", "/samarbeidspartnere/", "/personvern/"] + [f"/prosjekter/{p['slug']}/" for p in PROSJEKTER]
 
 
 def bygg_sitemap(dato="2026-10-07"):
@@ -1166,6 +1220,7 @@ def main():
     bygg_forside()
     bygg_prosjektsider()
     bygg_prosjektoversikt()
+    bygg_samarbeidspartnere()
     bygg_personvern()
     bygg_404()
     bygg_sitemap()
