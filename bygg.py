@@ -118,9 +118,10 @@ TJENESTER = [
     ),
     (
         "massetransport",
-        "Masse&shy;transport",
-        "Vi kjører pukk, singel, matjord og andre masser til private og bedrifter "
-        "– akkurat den typen og mengden du trenger.",
+        "Graving og masse&shy;transport",
+        "Vi graver med egen gravemaskin – grøfter, drenering, tomt og uteområder – "
+        "og kjører pukk, singel, matjord og andre masser til private og bedrifter, "
+        "akkurat den typen og mengden du trenger.",
     ),
     (
         "grunnarbeid",
@@ -535,7 +536,7 @@ def bunn():
 <div class="ramme bunn__topp">
 <div>
 {logo(FIRMA, "logo-skilt.svg", "logo logo--skilt")}
-<p class="bunn__om">Snekkerfirma fra {POSTSTED}. Nybygg, tilbygg, rehabilitering, drenering og massetransport i {KOMMUNE} og omegn.</p>
+<p class="bunn__om">Snekkerfirma fra {POSTSTED}. Nybygg, tilbygg, rehabilitering, graving, drenering og massetransport i {KOMMUNE} og omegn.</p>
 </div>
 <div>
 <h2>Kontakt</h2>
@@ -639,10 +640,10 @@ def hero():
 </div>
 <p class="hero__merk" aria-hidden="true">Illustrasjon</p>
 <div class="ramme hero__innhold">
-<p class="stikk hero__stikk"><span class="prikk" aria-hidden="true"></span>Snekker · Tømrer · Massetransport – {POSTSTED}</p>
+<p class="stikk hero__stikk"><span class="prikk" aria-hidden="true"></span>Snekker · Tømrer · Graving · Massetransport – {POSTSTED}</p>
 <h1 class="hero__tittel" id="hero-tittel"><span class="linje"><span>Bygget</span></span> <span class="linje"><span>for å</span></span> <span class="linje"><span class="hero__fyll">stå.</span></span></h1>
 <div class="hero__under">
-<p class="hero__ingress">{KORTNAVN} er snekkerfirmaet fra {POSTSTED} som tar jobben fra første spadetak til siste list – nybygg, tilbygg, rehabilitering, drenering og massetransport.</p>
+<p class="hero__ingress">{KORTNAVN} er snekkerfirmaet fra {POSTSTED} som tar jobben fra første spadetak til siste list – nybygg, tilbygg, rehabilitering, graving, drenering og massetransport.</p>
 <div class="knapperad">
 <a class="knapp" href="#kontakt">Be om befaring {PIL_IKON}</a>
 <a class="knapp knapp--tom" href="tel:{TLF_URI}">{TLF_IKON}{TLF_VIS}</a>
@@ -660,7 +661,7 @@ def hero():
 
 
 def baand():
-    ord_ = ["Nybygg", "Tilbygg", "Rehabilitering", "Bad og vaskerom", "Drenering", "Massetransport", "Pukk · Singel · Matjord"]
+    ord_ = ["Nybygg", "Tilbygg", "Rehabilitering", "Bad og vaskerom", "Drenering", "Graving", "Massetransport", "Pukk · Singel · Matjord"]
     gruppe = "".join(f"<span>{o}</span>{STJERNE}" for o in ord_)
     return f'''<div class="baand-ramme" aria-hidden="true">
 <div class="baand"><div class="baand__spor"><div class="baand__gruppe">{gruppe}</div><div class="baand__gruppe">{gruppe}</div></div></div>
@@ -684,7 +685,7 @@ def tjenester():
 <div class="seksjonstopp">
 <p class="stikk"><span class="stikk__maal">1m</span> – Tjenester</p>
 <h2 id="tjenester-tittel" class="sig">Hva vi gjør</h2>
-<p class="seksjonstopp__ingress sig">Små og store oppdrag innen snekkerarbeid – og massene til jobben. Vi er sju ansatte med verktøy, traktor og maskiner, og tar oppdrag for både private og bedrifter.</p>
+<p class="seksjonstopp__ingress sig">Små og store oppdrag innen snekkerarbeid, graving og massetransport. Vi er sju ansatte med verktøy, gravemaskin og traktor, og tar oppdrag for både private og bedrifter.</p>
 </div>
 <ol class="tjenesteliste">
 {''.join(rader)}
@@ -752,7 +753,7 @@ def om_oss():
 <h2 id="om-tittel" class="sig">Lokale folk.<br>Ordentlig arbeid.</h2>
 </div>
 <div class="om__tekst sig">
-<p>{FIRMA} ble startet i {STIFTET} og holder til i {POSTSTED} i {KOMMUNE}. I dag er vi {ANSATTE} ansatte som tar alt fra små reparasjoner til hele bygg – og som stiller med traktor og maskiner når jobben krever det.</p>
+<p>{FIRMA} ble startet i {STIFTET} og holder til i {POSTSTED} i {KOMMUNE}. I dag er vi {ANSATTE} ansatte som tar alt fra små reparasjoner til hele bygg – og som stiller med gravemaskin og traktor når jobben krever det.</p>
 <p>Hos oss snakker du med dem som faktisk gjør jobben. Vi holder avtaler, sier fra tidlig hvis noe endrer seg, og leverer arbeid vi gjerne setter navnet vårt på.</p>
 </div>
 </div>
@@ -858,8 +859,8 @@ def bygg_forside():
     side(
         "index.html",
         f"Snekker og tømrer i {POSTSTED} | {FIRMA}",
-        f"{FIRMA} er snekkerfirmaet fra {POSTSTED}. Nybygg, tilbygg, rehabilitering, "
-        f"drenering og massetransport av pukk, singel og matjord i {KOMMUNE} og {FYLKE}.",
+        f"{FIRMA} er snekkerfirmaet fra {POSTSTED}: nybygg, tilbygg, rehabilitering, "
+        f"graving, drenering og massetransport i {KOMMUNE} og {FYLKE}.",
         "/",
         innhold,
         ekstra_hode=forhaand,
@@ -962,7 +963,7 @@ def bygg_prosjektoversikt():
 <nav class="brodsmuler" aria-label="Brødsmuler"><a href="/">Forside</a><span aria-hidden="true">/</span><span aria-current="page">Prosjekter</span></nav>
 <p class="stikk">Prosjekter · {antall} jobber</p>
 <h1>Arbeid vi står for</h1>
-<p class="prosjektside__ingress">Et utvalg av jobbene vi har gjort for private og bedrifter – fra bad og tilbygg til terrasser, drenering og massetransport. Klikk deg inn på et prosjekt for flere bilder og hva vi gjorde.</p>
+<p class="prosjektside__ingress">Et utvalg av jobbene vi har gjort for private og bedrifter – fra bad og tilbygg til terrasser, graving, drenering og massetransport. Klikk deg inn på et prosjekt for flere bilder og hva vi gjorde.</p>
 <ol class="prosjektliste">
 {"".join(rader)}
 </ol>
