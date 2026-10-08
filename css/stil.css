@@ -160,6 +160,11 @@ h3 { font-size: clamp(1.3rem, 2.2vw, 1.9rem); letter-spacing: -.02em; line-heigh
 .topp__hoyre { display: flex; align-items: center; gap: 1.25rem; }
 .topp__tlf { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-width: 44px; min-height: 44px; font: 500 .82rem/1 var(--mono); letter-spacing: .04em; text-decoration: none; }
 .topp__tlf svg { color: var(--aksent); }
+.topp__fb { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin: 0 -.5rem; color: var(--tekst-2); }
+.topp__fb:hover, .topp__fb:focus-visible { color: var(--aksent); }
+/* smal PC-skjerm: litt tettere meny, så Facebook-ikonet får plass */
+@media (min-width: 1061px) and (max-width: 1199px) { .meny { gap: 1.3rem; } .topp__inner { gap: 1.5rem; } }
+.topp__fb { flex: none; }
 .topp__tlf:hover { color: var(--aksent); }
 
 .luke { display: none; position: relative; width: 46px; height: 46px; padding: 0; border: 1px solid var(--strek-sterk); border-radius: var(--radius); background: rgba(13, 12, 10, .4); color: var(--tekst); cursor: pointer; }
@@ -186,11 +191,14 @@ h3 { font-size: clamp(1.3rem, 2.2vw, 1.9rem); letter-spacing: -.02em; line-heigh
 .mobilmeny nav a { font: 900 clamp(2rem, 9vw, 3.2rem)/1.1 var(--font); text-transform: uppercase; letter-spacing: -.03em; text-decoration: none; }
 .mobilmeny nav a:hover { color: var(--aksent); }
 .mobilmeny .knapp { align-self: flex-start; }
+.mobilmeny__fb { display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; align-self: flex-start; font: 500 .9rem/1 var(--mono); text-decoration: none; }
+.mobilmeny__fb svg { color: var(--aksent); }
 .mobilmeny__kontakt { margin: 0; font: 500 .8rem/1.8 var(--mono); color: var(--dempet); }
 body.meny-aapen { overflow: hidden; }
 
 @media (max-width: 1060px) {
   .meny { display: none; }
+  .topp__fb { display: none; }
   .topp__hoyre { margin-left: auto; }
   .luke { display: block; }
 }
@@ -257,6 +265,9 @@ body.meny-aapen { overflow: hidden; }
   color: rgba(238, 231, 220, .45);
 }
 
+/* h1 = linja med søkeord (.hero__stikk) + «Bygget for å stå.» (.hero__tittel) */
+.hero__h1 { margin: 0; }
+.hero__h1 > .hero__tittel { display: block; }
 .hero__innhold { position: relative; padding-top: calc(var(--topp-total) + 6vh); padding-bottom: clamp(1.75rem, 4.5vh, 3.25rem); }
 .hero__stikk::before { display: none; }
 .hero__stikk { color: var(--tekst-2); animation: inn .9s var(--ease) .15s both; }

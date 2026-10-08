@@ -106,6 +106,8 @@ def main():
         f("CNAME er feil")
     if not (ROT / ".nojekyll").exists():
         f(".nojekyll mangler")
+    if forhandsvisning and (ROT / "llms.txt").exists():
+        f("llms.txt finnes i forhåndsvisningen – skal bare lages ved lansering")
     robots = (ROT / "robots.txt").read_text(encoding="utf-8")
     if "Disallow" in robots:
         f("robots.txt har Disallow – da ser ikke Google noindex-merket")
@@ -126,6 +128,11 @@ def main():
                         f(f"etter lansering står «{rest}» igjen i {rel}")
             if f"Sitemap: {PRODUKSJONSDOMENE}/sitemap.xml" not in (kopi / "robots.txt").read_text(encoding="utf-8"):
                 f("robots.txt ved lansering mangler sitemap")
+            llms = kopi / "llms.txt"
+            if not llms.exists():
+                f("llms.txt mangler ved lansering")
+            elif "ubicu.cloud" in llms.read_text(encoding="utf-8"):
+                f("llms.txt ved lansering peker til forhåndsvisningen")
 
     print()
     if feil:

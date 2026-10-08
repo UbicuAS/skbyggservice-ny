@@ -373,6 +373,21 @@ PROSJEKTER = [
 ]
 
 
+def prosjektbeskrivelse(p, sted_tekst, maks=158):
+    """Metabeskrivelse: tittel, sted, hvem – og så de første arbeidsoperasjonene som får plass."""
+    tekst = f"{p['tittel']}{sted_tekst}, utført av {FIRMA} fra {POSTSTED}."
+    arbeid = [a.rstrip(".") for a in p.get("arbeid", [])]
+    if arbeid and len(f"{tekst} {arbeid[0]}.") <= maks:
+        tekst = f"{tekst} {arbeid[0]}"
+        for a in arbeid[1:]:
+            neste = f"{tekst}, {a[0].lower()}{a[1:]}"
+            if len(neste) + 1 > maks:
+                break
+            tekst = neste
+        tekst += "."
+    return tekst
+
+
 def prosjektmeta(p, bilder=True):
     """«Hamar · 2026 · 4 bilder» – sted bare der det finnes."""
     deler = [p.get("sted"), p.get("tid")]
@@ -403,6 +418,12 @@ TLF_IKON = (
     'stroke-width="1.5" stroke-linejoin="round"/></svg>'
 )
 STJERNE = '<span class="stjerne" aria-hidden="true"></span>'
+# Facebook-«f» (Remix Icon «facebook-fill», Apache 2.0), i tekstfargen
+FB_IKON = (
+    '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+    '<path fill="currentColor" d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14'
+    'C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5z"/></svg>'
+)
 VEKST_IKON = (
     '<svg width="22" height="22" viewBox="0 0 16 16" fill="none" aria-hidden="true" '
     'focusable="false"><path d="M1.5 12.5l4.5-4.5 3 3 5.5-6M10 5h4.5v4.5" stroke="currentColor" '
@@ -520,10 +541,34 @@ ORGANISASJON = {
         "addressRegion": FYLKE,
         "addressCountry": "NO",
     },
+    "description": (
+        f"{FIRMA} er et snekker- og tømrerfirma fra {POSTSTED} i {KOMMUNE}. Nybygg, tilbygg, "
+        f"rehabilitering, graving, drenering og massetransport for private og bedrifter i {FYLKE}."
+    ),
+    "slogan": "Bygget for å stå.",
+    "logo": f"{DOMENE}/merkevare/logo.svg",
+    "sameAs": [FACEBOOK],
     "areaServed": [
         {"@type": "AdministrativeArea", "name": KOMMUNE},
+        {"@type": "AdministrativeArea", "name": "Hamar"},
         {"@type": "AdministrativeArea", "name": FYLKE},
     ],
+    "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Tjenester",
+        "itemListElement": [
+            {
+                "@type": "Offer",
+                "itemOffered": {
+                    "@type": "Service",
+                    "name": t[1].replace("&shy;", ""),
+                    "description": t[2],
+                    "areaServed": {"@type": "AdministrativeArea", "name": FYLKE},
+                },
+            }
+            for t in TJENESTER
+        ],
+    },
     "knowsAbout": [t[1].replace("&shy;", "") for t in TJENESTER],
     "hasCredential": {
         "@type": "EducationalOccupationalCredential",
@@ -574,6 +619,7 @@ def topp():
 {logo()}
 <nav class="meny" aria-label="Hovedmeny">{lenker}</nav>
 <div class="topp__hoyre">
+<a class="topp__fb" href="{FACEBOOK}" rel="noopener" aria-label="{FIRMA} på Facebook">{FB_IKON}</a>
 <a class="topp__tlf" href="tel:{TLF_URI}" aria-label="Ring oss på {TLF_VIS}">{TLF_IKON}<span>{TLF_VIS}</span></a>
 <a class="knapp knapp--liten" href="/#kontakt">Be om befaring</a>
 <button class="luke" type="button" aria-expanded="false" aria-controls="mobilmeny" aria-label="Åpne menyen"><span></span></button>
@@ -583,6 +629,7 @@ def topp():
 <div class="mobilmeny" id="mobilmeny">
 <nav aria-label="Meny for mobil">{lenker}<a href="/#kontakt">Kontakt</a></nav>
 <a class="knapp" href="tel:{TLF_URI}">{TLF_IKON}Ring {TLF_VIS}</a>
+<a class="mobilmeny__fb" href="{FACEBOOK}" rel="noopener">{FB_IKON}Facebook</a>
 <p class="mobilmeny__kontakt"><a href="mailto:{EPOST}">{EPOST}</a><br>{POSTSTED} · {KOMMUNE}</p>
 </div>'''
 
@@ -600,6 +647,7 @@ def bunn():
 <ul>
 <li><a href="tel:{TLF_URI}">{TLF_VIS}</a></li>
 <li><a href="mailto:{EPOST}">{EPOST}</a></li>
+<li><a href="{FACEBOOK}" rel="noopener">Facebook</a></li>
 <li>{POSTNR} {POSTSTED}</li>
 </ul>
 </div>
@@ -630,7 +678,7 @@ def side(filsti, tittel, beskrivelse, kanonisk, innhold, ld=(), ekstra_hode="", 
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>{e(tittel)}</title>
 <meta name="description" content="{e(beskrivelse)}">
-<link rel="canonical" href="{DOMENE}{kanonisk}">
+{f'<link rel="canonical" href="{DOMENE}{kanonisk}">' if kanonisk else ""}
 {ROBOTS_META}
 <meta name="theme-color" content="#0d0c0a">
 <meta name="format-detection" content="telephone=no">
@@ -640,7 +688,7 @@ def side(filsti, tittel, beskrivelse, kanonisk, innhold, ld=(), ekstra_hode="", 
 <meta property="og:locale" content="nb_NO">
 <meta property="og:title" content="{e(tittel)}">
 <meta property="og:description" content="{e(beskrivelse)}">
-<meta property="og:url" content="{DOMENE}{kanonisk}">
+{f'<meta property="og:url" content="{DOMENE}{kanonisk}">' if kanonisk else ""}
 <meta property="og:image" content="{DOMENE}/merkevare/delebilde.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -697,8 +745,7 @@ def hero():
 </div>
 <p class="hero__merk" aria-hidden="true">Illustrasjon</p>
 <div class="ramme hero__innhold">
-<p class="stikk hero__stikk"><span class="prikk" aria-hidden="true"></span>Snekker · Tømrer · Graving · Massetransport – {POSTSTED}</p>
-<h1 class="hero__tittel" id="hero-tittel"><span class="linje"><span>Bygget</span></span> <span class="linje"><span>for å</span></span> <span class="linje"><span class="hero__fyll">stå.</span></span></h1>
+<h1 class="hero__h1" id="hero-tittel"><span class="stikk hero__stikk"><span class="prikk" aria-hidden="true"></span>Snekker · Tømrer · Graving · Massetransport – {POSTSTED}</span> <span class="hero__tittel"><span class="linje"><span>Bygget</span></span> <span class="linje"><span>for å</span></span> <span class="linje"><span class="hero__fyll">stå.</span></span></span></h1>
 <div class="hero__under">
 <p class="hero__ingress">{KORTNAVN} er snekkerfirmaet fra {POSTSTED} som tar jobben fra første spadetak til siste list – nybygg, tilbygg, rehabilitering, graving, drenering og massetransport.</p>
 <div class="knapperad">
@@ -1011,8 +1058,7 @@ def bygg_prosjektsider():
         side(
             f"prosjekter/{p['slug']}/index.html",
             f"{p['tittel']}{sted_tittel} | {FIRMA}",
-            f"{p['tittel']}{sted_tekst}, utført av {FIRMA}. Se {len(p['bilder'])} bilder fra jobben "
-            f"og hva vi gjorde.",
+            prosjektbeskrivelse(p, sted_tekst),
             url,
             innhold,
             ld=(brodsmuler_ld([("Forside", "/"), ("Prosjekter", "/prosjekter/"), (p["tittel"], url)]),),
@@ -1054,7 +1100,7 @@ def bygg_prosjektoversikt():
 </article>'''
     side(
         "prosjekter/index.html",
-        f"Prosjekter – bad, tilbygg, terrasse og drenering | {FIRMA}",
+        f"Prosjekter – bad, terrasse og drenering | {FIRMA}",
         f"Se prosjekter fra {FIRMA}: bad og vaskerom, tilbygg, terrasser, drenering og "
         f"massetransport i {KOMMUNE}, Hamar og {FYLKE}.",
         "/prosjekter/",
@@ -1149,16 +1195,36 @@ def bygg_404():
 <div class="knapperad"><a class="knapp" href="/">Til forsiden {PIL_IKON}</a><a class="knapp knapp--tom" href="tel:{TLF_URI}">{TLF_IKON}{TLF_VIS}</a></div>
 </div>
 </section>'''
-    side("404.html", f"Fant ikke siden | {FIRMA}", "Siden finnes ikke.", "/404.html", innhold, kropp_klasse="undersiden")
+    side("404.html", f"Fant ikke siden | {FIRMA}", "Siden finnes ikke.", None, innhold, kropp_klasse="undersiden")
 
 
 # --- Faste filer ------------------------------------------------------------
 SIDER_FOR_SITEMAP = ["/", "/prosjekter/", "/samarbeidspartnere/", "/personvern/"] + [f"/prosjekter/{p['slug']}/" for p in PROSJEKTER]
 
 
-def bygg_sitemap(dato="2026-10-07"):
+def sitemap_datoer():
+    """Dato per side, oppdatert bare når siden faktisk endrer innhold.
+    Lagres i verktoy/sitemap-datoer.json (innholdshash + dato)."""
+    fil = ROT / "verktoy" / "sitemap-datoer.json"
+    lagret = json.loads(fil.read_text(encoding="utf-8")) if fil.exists() else {}
+    modus = "forhandsvisning" if FORHANDSVISNING else "drift"
+    gamle = lagret.get(modus, {})
+    nye = {}
+    idag = date.today().isoformat()
+    for s in SIDER_FOR_SITEMAP:
+        side = ROT / s.strip("/") / "index.html" if s != "/" else ROT / "index.html"
+        h = hashlib.sha256(side.read_bytes()).hexdigest()[:16]
+        forrige = gamle.get(s)
+        nye[s] = forrige if forrige and forrige["hash"] == h else {"hash": h, "dato": idag}
+    lagret[modus] = nye
+    fil.write_text(json.dumps(lagret, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    return {s: v["dato"] for s, v in nye.items()}
+
+
+def bygg_sitemap():
+    datoer = sitemap_datoer()
     rader = "\n".join(
-        f"<url><loc>{DOMENE}{s}</loc><lastmod>{dato}</lastmod></url>" for s in SIDER_FOR_SITEMAP
+        f"<url><loc>{DOMENE}{s}</loc><lastmod>{datoer[s]}</lastmod></url>" for s in SIDER_FOR_SITEMAP
     )
     (ROT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -1167,6 +1233,49 @@ def bygg_sitemap(dato="2026-10-07"):
         encoding="utf-8",
         newline="\n",
     )
+
+
+def bygg_llms():
+    """Kort faktaside for AI-tjenester (llmstxt.org). Bare i drift – forhåndsvisningen
+    skal ikke gi AI-tjenester en adresse som forsvinner."""
+    fil = ROT / "llms.txt"
+    if FORHANDSVISNING:
+        if fil.exists():
+            fil.unlink()
+        return
+    g = SENTRAL_GODKJENNING
+    tjenester = "\n".join(f"- **{t[1].replace('&shy;', '')}:** {t[2]}" for t in TJENESTER)
+    prosjekter = "\n".join(f"- [{p['tittel']}]({DOMENE}/prosjekter/{p['slug']}/)" for p in PROSJEKTER)
+    tekst = f"""# {FIRMA}
+
+> Snekker- og tømrerfirma fra {POSTSTED} i {KOMMUNE} ({FYLKE}). Nybygg, tilbygg, rehabilitering,
+> graving, drenering og massetransport for private og bedrifter.
+
+- Organisasjonsnummer: {ORGNR}
+- Etablert: {STIFTET} · Ansatte: {ANSATTE}
+- Område: {KOMMUNE}, Hamar og {FYLKE}
+- Sentralt godkjent av Direktoratet for byggkvalitet som utførende i tiltaksklasse {g["tiltaksklasse"]}: {", ".join(o.lower() for o in g["omraader"])}. Se {g["register"]}
+- Gaselle-bedrift {GASELLE_AAR} (Dagens Næringsliv)
+- Byggesøknader og tegninger i samarbeid med Ubicu AS ({UBICU_URL})
+- Telefon: {TLF_VIS} · E-post: {EPOST}
+- Facebook: {FACEBOOK}
+
+## Tjenester
+
+{tjenester}
+
+## Sider
+
+- [Forside]({DOMENE}/)
+- [Prosjekter]({DOMENE}/prosjekter/)
+- [Samarbeidspartnere]({DOMENE}/samarbeidspartnere/)
+- [Personvern]({DOMENE}/personvern/)
+
+## Prosjekter
+
+{prosjekter}
+"""
+    fil.write_text(tekst, encoding="utf-8", newline="\n")
 
 
 def bygg_robots():
@@ -1225,6 +1334,7 @@ def main():
     bygg_404()
     bygg_sitemap()
     bygg_robots()
+    bygg_llms()
     bygg_manifest()
     modus = "FORHÅNDSVISNING (noindex)" if FORHANDSVISNING else "DRIFT (indekseres)"
     print(f"Bygget {FIRMA} – {modus} – {DOMENE}")
