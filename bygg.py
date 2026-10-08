@@ -141,6 +141,9 @@ SENTRAL_GODKJENNING = {
     "gyldig_til": date(2027, 2, 19),
     "register": f"https://sgregister.dibk.no/enterprises/{ORGNR.replace(' ', '')}",
     "tiltaksklasse": 1,
+    # DiBKs offisielle merke, sort boks med gull krone og tekst (primærvarianten).
+    # Brukes uendret – DiBK tillater ikke endret form, farge eller rotasjon.
+    "merke": "merkevare/sentralt-godkjent.png",
     "omraader": [
         "Tømrerarbeid og montering av trekonstruksjoner",
         "Veg- og grunnarbeider",
@@ -377,11 +380,6 @@ TLF_IKON = (
     'stroke-width="1.5" stroke-linejoin="round"/></svg>'
 )
 STJERNE = '<span class="stjerne" aria-hidden="true"></span>'
-HAKE_IKON = (
-    '<svg width="22" height="22" viewBox="0 0 16 16" fill="none" aria-hidden="true" '
-    'focusable="false"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="currentColor" '
-    'stroke-width="2" stroke-linecap="square"/></svg>'
-)
 VEKST_IKON = (
     '<svg width="22" height="22" viewBox="0 0 16 16" fill="none" aria-hidden="true" '
     'focusable="false"><path d="M1.5 12.5l4.5-4.5 3 3 5.5-6M10 5h4.5v4.5" stroke="currentColor" '
@@ -810,7 +808,7 @@ def utmerkelser():
     omraader = "".join(f"<li>{e(o)}</li>" for o in g["omraader"])
     return f'''<div class="utmerket">
 <div class="utmerket__kort sig">
-<span class="utmerket__merke">{HAKE_IKON}</span>
+<img class="utmerket__godkjent" src="/{g["merke"]}?v={innholdsmerke(g["merke"])}" width="425" height="425" alt="Godkjenningsmerket: Sentralt godkjent" loading="lazy" decoding="async">
 <h3>Sentralt godkjent</h3>
 <p>Godkjent av Direktoratet for byggkvalitet som utførende i tiltaksklasse {g["tiltaksklasse"]} innen:</p>
 <ul class="utmerket__liste">{omraader}</ul>
