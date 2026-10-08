@@ -299,6 +299,10 @@ body.meny-aapen { overflow: hidden; }
 .hero__ingress { max-width: 46ch; margin: 0; color: var(--tekst-2); font-size: clamp(1rem, 1.25vw, 1.18rem); }
 @keyframes inn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 
+/* DiBKs merke ved knappene: like høyt som knappene (54 px, over minstemålet 0,9 cm) */
+.hero__godkjent { display: block; flex: none; width: 54px; height: 54px; }
+.hero__godkjent img { display: block; width: 100%; height: 100%; }
+.hero__godkjent:focus-visible { outline: 2px solid var(--aksent); outline-offset: 3px; }
 .hero__fot { position: relative; }
 .hero__fakta {
   list-style: none; margin-block: 0; padding: 0 0 .85rem;

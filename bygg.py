@@ -679,6 +679,7 @@ def hero():
 <div class="hero__under">
 <p class="hero__ingress">{KORTNAVN} er snekkerfirmaet fra {POSTSTED} som tar jobben fra første spadetak til siste list – nybygg, tilbygg, rehabilitering, graving, drenering og massetransport.</p>
 <div class="knapperad">
+<a class="hero__godkjent" href="#godkjent"><img src="/{SENTRAL_GODKJENNING["merke"]}?v={innholdsmerke(SENTRAL_GODKJENNING["merke"])}" width="425" height="425" alt="Sentralt godkjent – se godkjenningen" decoding="async"></a>
 <a class="knapp" href="#kontakt">Be om befaring {PIL_IKON}</a>
 <a class="knapp knapp--tom" href="tel:{TLF_URI}">{TLF_IKON}{TLF_VIS}</a>
 </div>
@@ -689,7 +690,6 @@ def hero():
 <li><span>Etablert</span>{STIFTET}</li>
 <li><span>Ansatte</span>{ANSATTE}</li>
 <li><span>Base</span>{POSTSTED}, {FYLKE}</li>
-<li><span>Sentralt</span>godkjent</li>
 <li><span>Gaselle</span>{GASELLE_AAR}</li>
 </ul>
 </div>
@@ -806,7 +806,7 @@ def om_oss():
 def utmerkelser():
     g = SENTRAL_GODKJENNING
     omraader = "".join(f"<li>{e(o)}</li>" for o in g["omraader"])
-    return f'''<div class="utmerket">
+    return f'''<div class="utmerket" id="godkjent">
 <div class="utmerket__kort sig">
 <img class="utmerket__godkjent" src="/{g["merke"]}?v={innholdsmerke(g["merke"])}" width="425" height="425" alt="Godkjenningsmerket: Sentralt godkjent" loading="lazy" decoding="async">
 <h3>Sentralt godkjent</h3>
