@@ -39,7 +39,7 @@ KOMMUNE = "Ringsaker"
 FYLKE = "Innlandet"
 TLF_VIS = "415 73 173"
 TLF_URI = "+4741573173"
-EPOST = "kenneth@skbyggservice.no"
+EPOST = "steffen@skbyggservice.no"
 STIFTET = 2020
 ANSATTE = 7
 
