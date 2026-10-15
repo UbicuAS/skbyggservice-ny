@@ -766,7 +766,9 @@ def hero():
 
 
 def baand():
-    ord_ = ["Nybygg", "Tilbygg", "Rehabilitering", "Bad og vaskerom", "Drenering", "Graving", "Massetransport", "Pukk · Singel · Matjord"]
+    # Flere ord gir lengre bånd: juster rulletiden i css/stil.css (.baand__spor)
+    # i samme forhold, så farten blir den samme.
+    ord_ = ["Totalentreprenør", "Nybygg", "Tilbygg", "Rehabilitering", "Bad og vaskerom", "Støping", "Drenering", "Graving", "Massetransport", "Pukk · Singel · Matjord"]
     gruppe = "".join(f"<span>{o}</span>{STJERNE}" for o in ord_)
     return f'''<div class="baand-ramme" aria-hidden="true">
 <div class="baand"><div class="baand__spor"><div class="baand__gruppe">{gruppe}</div><div class="baand__gruppe">{gruppe}</div></div></div>
